@@ -69,4 +69,7 @@ dependencies {
 
     // To load images in user's device
     implementation("io.coil-kt:coil-compose:2.4.0")
+
+    // Add extended icons
+    implementation("androidx.compose.material:material-icons-extended:1.5.3")
 }
