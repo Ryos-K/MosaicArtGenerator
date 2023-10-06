@@ -55,7 +55,6 @@ fun SelectMaterialScreen(
                         .clip(RoundedCornerShape(4.dp))
                 )
             }
-
         }
 
 

@@ -88,7 +88,12 @@ fun SelectScreen(
                 onClickSelect = { materialImageLauncher.launch("image/*") }
             )
 
-            SelectRoute.Confirm -> TODO()
+            SelectRoute.Confirm -> ConfirmScreen(
+                modifier = Modifier.weight(1f),
+                targetUri = targetImageUri,
+                gridSize = gridSize,
+                materialUriSet = materialImageUriSet
+            )
         }
 
         Row(
@@ -101,7 +106,7 @@ fun SelectScreen(
                     when (current) {
                         SelectRoute.SelectTarget -> TODO()
                         SelectRoute.SelectMaterial -> current = SelectRoute.SelectTarget
-                        SelectRoute.Confirm -> TODO()
+                        SelectRoute.Confirm -> current = SelectRoute.SelectMaterial
                     }
                 },
                 Modifier.padding(16.dp, 0.dp),
@@ -113,7 +118,7 @@ fun SelectScreen(
                 onClick = {
                     when (current) {
                         SelectRoute.SelectTarget -> current = SelectRoute.SelectMaterial
-                        SelectRoute.SelectMaterial -> TODO()
+                        SelectRoute.SelectMaterial -> current = SelectRoute.Confirm
                         SelectRoute.Confirm -> TODO()
                     }
                 },
