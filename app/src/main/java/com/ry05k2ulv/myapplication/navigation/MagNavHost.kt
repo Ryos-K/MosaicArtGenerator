@@ -6,8 +6,10 @@ import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.rememberNavController
-import com.ry05k2ulv.myapplication.ui.select.SELECT_NAVIGATION_ROUTE
-import com.ry05k2ulv.myapplication.ui.select.selectScreen
+import com.ry05k2ulv.myapplication.ui.generate.generateScreen
+import com.ry05k2ulv.myapplication.ui.generate.navigateToGenerate
+import com.ry05k2ulv.myapplication.ui.generate.select.SELECT_NAVIGATION_ROUTE
+import com.ry05k2ulv.myapplication.ui.generate.select.selectScreen
 
 @Composable
 fun MagNavHost(
@@ -16,6 +18,10 @@ fun MagNavHost(
     startDestination: String,
 ) {
     NavHost(navController = navController, startDestination = startDestination, modifier = modifier ) {
-        selectScreen()
+        selectScreen(
+            onBack = {},
+            onNext = navController::navigateToGenerate
+        )
+        generateScreen()
     }
 }

@@ -23,9 +23,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.navigation.compose.rememberNavController
 import com.ry05k2ulv.myapplication.navigation.MagNavHost
-import com.ry05k2ulv.myapplication.ui.select.SELECT_NAVIGATION_ROUTE
-import com.ry05k2ulv.myapplication.ui.select.SelectScreen
-import com.ry05k2ulv.myapplication.ui.select.SelectViewModel
+import com.ry05k2ulv.myapplication.ui.generate.select.SELECT_NAVIGATION_ROUTE
+import com.ry05k2ulv.myapplication.ui.generate.select.SelectScreen
+import com.ry05k2ulv.myapplication.ui.generate.select.SelectViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

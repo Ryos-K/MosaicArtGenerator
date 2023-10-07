@@ -1,4 +1,4 @@
-package com.ry05k2ulv.myapplication.ui.select
+package com.ry05k2ulv.myapplication.ui.generate.select
 
 import android.net.Uri
 import androidx.compose.foundation.Canvas

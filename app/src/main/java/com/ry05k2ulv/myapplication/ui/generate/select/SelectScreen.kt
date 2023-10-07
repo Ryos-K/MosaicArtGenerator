@@ -1,4 +1,4 @@
-package com.ry05k2ulv.myapplication.ui.select
+package com.ry05k2ulv.myapplication.ui.generate.select
 
 import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -31,7 +31,9 @@ import androidx.hilt.navigation.compose.hiltViewModel
 
 @Composable
 fun SelectScreen(
-    viewModel: SelectViewModel = hiltViewModel()
+    viewModel: SelectViewModel = hiltViewModel(),
+    onBack: () -> Unit,
+    onNext: () -> Unit,
 ) {
     val targetImageUri = viewModel.targetImageUri.value
     val materialImageUriSet = viewModel.materialImageUriSet.value
@@ -105,7 +107,7 @@ fun SelectScreen(
             TextButton(
                 onClick = {
                     when (current) {
-                        SelectRoute.SelectTarget -> TODO()
+                        SelectRoute.SelectTarget -> onBack()
                         SelectRoute.SelectMaterial -> current = SelectRoute.SelectTarget
                         SelectRoute.Confirm -> current = SelectRoute.SelectMaterial
                     }
@@ -120,7 +122,7 @@ fun SelectScreen(
                     when (current) {
                         SelectRoute.SelectTarget -> current = SelectRoute.SelectMaterial
                         SelectRoute.SelectMaterial -> current = SelectRoute.Confirm
-                        SelectRoute.Confirm -> TODO()
+                        SelectRoute.Confirm -> onNext()
                     }
                 },
                 Modifier.padding(16.dp, 0.dp)
