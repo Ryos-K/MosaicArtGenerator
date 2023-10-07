@@ -27,11 +27,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.IntRect
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.ry05k2ulv.myapplication.ui.generate.GenerateViewModel
 
 
 @Composable
 fun SelectScreen(
-    viewModel: SelectViewModel = hiltViewModel(),
+    viewModel: GenerateViewModel = hiltViewModel(),
     onBack: () -> Unit,
     onNext: () -> Unit,
 ) {

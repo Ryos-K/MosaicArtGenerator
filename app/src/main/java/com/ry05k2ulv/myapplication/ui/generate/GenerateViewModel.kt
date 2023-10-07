@@ -1,4 +1,4 @@
-package com.ry05k2ulv.myapplication.ui.generate.select
+package com.ry05k2ulv.myapplication.ui.generate
 
 import android.net.Uri
 import androidx.compose.runtime.mutableIntStateOf
@@ -8,7 +8,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
 @HiltViewModel
-class SelectViewModel @Inject constructor() : ViewModel() {
+class GenerateViewModel @Inject constructor() : ViewModel() {
 
     var targetImageUri = mutableStateOf<Uri?>(null)
         private set
