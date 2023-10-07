@@ -26,11 +26,12 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.IntRect
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 
 
 @Composable
 fun SelectScreen(
-    viewModel: SelectViewModel
+    viewModel: SelectViewModel = hiltViewModel()
 ) {
     val targetImageUri = viewModel.targetImageUri.value
     val materialImageUriSet = viewModel.materialImageUriSet.value

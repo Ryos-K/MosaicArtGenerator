@@ -27,8 +27,6 @@ import com.ry05k2ulv.myapplication.ui.select.SelectViewModel
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun MagApp() {
-    val viewModel = SelectViewModel()
-
     Scaffold(
         topBar = {
             MagTopAppBar(
@@ -39,7 +37,7 @@ fun MagApp() {
             )
         }
     ) {
-        SelectScreen(viewModel)
+        SelectScreen()
     }
 }
 
