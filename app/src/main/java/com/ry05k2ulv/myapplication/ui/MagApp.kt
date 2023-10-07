@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -20,13 +21,17 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.navigation.compose.rememberNavController
+import com.ry05k2ulv.myapplication.navigation.MagNavHost
+import com.ry05k2ulv.myapplication.ui.select.SELECT_NAVIGATION_ROUTE
 import com.ry05k2ulv.myapplication.ui.select.SelectScreen
 import com.ry05k2ulv.myapplication.ui.select.SelectViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
-@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun MagApp() {
+    val navController = rememberNavController()
+
     Scaffold(
         topBar = {
             MagTopAppBar(
@@ -37,7 +42,11 @@ fun MagApp() {
             )
         }
     ) {
-        SelectScreen()
+        MagNavHost(
+            modifier = Modifier.padding(it),
+            navController = navController,
+            startDestination = SELECT_NAVIGATION_ROUTE
+        )
     }
 }
 
