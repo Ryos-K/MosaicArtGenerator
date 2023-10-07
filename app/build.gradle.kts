@@ -1,11 +1,13 @@
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
+    kotlin("kapt")
+    id("com.google.dagger.hilt.android")
 }
 
 android {
     namespace = "com.ry05k2ulv.myapplication"
-    compileSdk = 33
+    compileSdk = 34
 
     defaultConfig {
         applicationId = "com.ry05k2ulv.myapplication"
@@ -49,6 +51,12 @@ android {
     }
 }
 
+tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach {
+    kotlinOptions {
+        jvmTarget = "1.8"
+    }
+}
+
 dependencies {
 
     implementation("androidx.core:core-ktx:1.9.0")
@@ -66,4 +74,23 @@ dependencies {
     androidTestImplementation("androidx.compose.ui:ui-test-junit4")
     debugImplementation("androidx.compose.ui:ui-tooling")
     debugImplementation("androidx.compose.ui:ui-test-manifest")
+
+    // To load images in user's device
+    implementation("io.coil-kt:coil-compose:2.4.0")
+
+    // Add extended icons
+    implementation("androidx.compose.material:material-icons-extended:1.5.3")
+
+    // Add Hilt to inject dependencies
+    val hiltVersion = "2.46"
+    implementation("com.google.dagger:hilt-android:$hiltVersion")
+    kapt("com.google.dagger:hilt-android-compiler:$hiltVersion")
+    implementation("androidx.hilt:hilt-navigation-compose:1.0.0")
+
+    val navVersion = "2.5.3"
+    implementation("androidx.navigation:navigation-compose:$navVersion")
+}
+
+kapt {
+    correctErrorTypes = true
 }
