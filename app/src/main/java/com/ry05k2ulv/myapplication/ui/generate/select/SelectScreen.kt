@@ -28,7 +28,7 @@ import androidx.compose.ui.unit.IntRect
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.ry05k2ulv.myapplication.ui.generate.GenerateViewModel
-
+import androidx.lifecycle.viewmodel.compose.viewModel
 
 @Composable
 fun SelectScreen(

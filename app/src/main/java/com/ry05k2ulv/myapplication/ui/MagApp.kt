@@ -17,7 +17,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.navigation.compose.rememberNavController
 import com.ry05k2ulv.myapplication.navigation.MagNavHost
-import com.ry05k2ulv.myapplication.ui.generate.select.SELECT_NAVIGATION_ROUTE
+import com.ry05k2ulv.myapplication.ui.generate.GENERATE_NAVIGATION_ROUTE
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -37,7 +37,7 @@ fun MagApp() {
         MagNavHost(
             modifier = Modifier.padding(it),
             navController = navController,
-            startDestination = SELECT_NAVIGATION_ROUTE
+            startDestination = GENERATE_NAVIGATION_ROUTE
         )
     }
 }
