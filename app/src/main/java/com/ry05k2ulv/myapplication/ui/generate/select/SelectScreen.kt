@@ -27,14 +27,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.IntRect
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.ry05k2ulv.myapplication.ui.generate.GenerateViewModel
-import androidx.lifecycle.viewmodel.compose.viewModel
 
 @Composable
 fun SelectScreen(
-    viewModel: GenerateViewModel = hiltViewModel(),
+    viewModel: SelectViewModel = hiltViewModel(),
     onBack: () -> Unit,
-    onNext: () -> Unit,
+    onNext: (Uri, Set<Uri>, Int) -> Unit,
 ) {
     val targetImageUri = viewModel.targetImageUri.value
     val materialImageUriSet = viewModel.materialImageUriSet.value
@@ -123,9 +121,9 @@ fun SelectScreen(
                     when (current) {
                         SelectRoute.SelectTarget -> current = SelectRoute.SelectMaterial
                         SelectRoute.SelectMaterial -> current = SelectRoute.Confirm
-                        SelectRoute.Confirm ->  {
-                            onNext()
-                            viewModel.generateMosaicArt()
+                        SelectRoute.Confirm -> {
+                            if (targetImageUri != null)
+                                onNext(targetImageUri, materialImageUriSet, gridSize)
                         }
                     }
                 },
