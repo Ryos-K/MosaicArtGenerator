@@ -123,7 +123,10 @@ fun SelectScreen(
                     when (current) {
                         SelectRoute.SelectTarget -> current = SelectRoute.SelectMaterial
                         SelectRoute.SelectMaterial -> current = SelectRoute.Confirm
-                        SelectRoute.Confirm -> onNext()
+                        SelectRoute.Confirm ->  {
+                            onNext()
+                            viewModel.generateMosaicArt()
+                        }
                     }
                 },
                 Modifier.padding(16.dp, 0.dp)
