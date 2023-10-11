@@ -11,6 +11,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ry05k2ulv.myapplication.generator.MosaicArtGenerator
+import com.ry05k2ulv.myapplication.imagestore.MagImageStore
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
@@ -40,7 +41,7 @@ class ResultArgs(
 
 @HiltViewModel
 class ResultViewModel @Inject constructor(
-    @ApplicationContext private val context: Context,
+    private val magImageStore: MagImageStore,
     savedStateHandle: SavedStateHandle
 ): ViewModel() {
     val result = MutableStateFlow<Bitmap?>(null)
@@ -59,7 +60,7 @@ class ResultViewModel @Inject constructor(
     }
 
     private val generator = MosaicArtGenerator(
-        targetImage = targetImageUri.getBitmapOrNull(context) ?: throw FileNotFoundException(),
+        targetImage = magImageStore.getBitmapOrNull(targetImageUri) ?: throw FileNotFoundException(),
         gridSize = gridSize
     )
 
@@ -67,30 +68,23 @@ class ResultViewModel @Inject constructor(
         generateMosaicArt()
     }
 
-    fun generateMosaicArt() {
+    private fun generateMosaicArt() {
         viewModelScope.launch(Dispatchers.Default) {
             materialImageUris.forEach {
                 generator.applyMaterialImage(
-                    it.getBitmapOrNull(context) ?: return@forEach
+                    magImageStore.getBitmapOrNull(it) ?: return@forEach
                 )
                 result.update { generator.getResultCopy() }
                 delay(20)
+            }
+            val bitmap = result.value
+            if (bitmap != null) {
+                magImageStore.saveBitmapAsPng(
+                    bitmap = bitmap,
+                    "hoge.png"
+                )
             }
         }
     }
 }
 
-fun Uri.getBitmapOrNull(
-    context: Context
-): Bitmap? {
-    Log.d(null, "uri to bitmap")
-    val contentResolver = context.contentResolver
-    return kotlin.runCatching {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-            val source = ImageDecoder.createSource(contentResolver, this)
-            ImageDecoder.decodeBitmap(source).copy(Bitmap.Config.ARGB_8888, true)
-        } else {
-            MediaStore.Images.Media.getBitmap(contentResolver, this)
-        }
-    }.getOrNull()
-}
