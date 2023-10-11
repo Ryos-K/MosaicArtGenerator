@@ -17,6 +17,7 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.navigation.NavOptions
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.ry05k2ulv.myapplication.navigation.MagNavHost
@@ -28,6 +29,7 @@ import com.ry05k2ulv.myapplication.ui.home.navigateToHome
 @Composable
 fun MagApp() {
     val navController = rememberNavController()
+    val navOptions = NavOptions.Builder().setLaunchSingleTop(true).setPopUpTo(HOME_NAVIGATION_ROUTE, false).build()
 
     val current = navController.currentBackStackEntryAsState().value?.destination?.route
         ?: HOME_NAVIGATION_ROUTE
@@ -38,7 +40,7 @@ fun MagApp() {
                 title = current.uppercase(),
                 navigationIcon = Icons.Default.Home,
                 navigationIconDescription = "Home",
-                onNavigationIconClick = navController::navigateToHome,
+                onNavigationIconClick = { navController.navigateToHome(navOptions) },
                 actionIcon = Icons.Default.Settings,
                 actionIconDescription = "Settings",
                 onAction = {}
@@ -48,7 +50,8 @@ fun MagApp() {
         MagNavHost(
             modifier = Modifier.padding(it),
             navController = navController,
-            startDestination = HOME_NAVIGATION_ROUTE
+            startDestination = HOME_NAVIGATION_ROUTE,
+            navOptions = navOptions
         )
     }
 }
