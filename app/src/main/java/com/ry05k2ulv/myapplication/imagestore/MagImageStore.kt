@@ -1,7 +1,6 @@
 package com.ry05k2ulv.myapplication.imagestore
 
-import android.app.Application
-import android.content.ContentResolver
+import android.content.ContentUris
 import android.content.ContentValues
 import android.content.Context
 import android.graphics.Bitmap
@@ -10,13 +9,17 @@ import android.net.Uri
 import android.os.Build
 import android.os.Environment
 import android.provider.MediaStore
-import android.util.Log
 import dagger.hilt.android.qualifiers.ApplicationContext
 import java.io.File
 import java.io.IOException
 import java.io.OutputStream
 import javax.inject.Inject
 import javax.inject.Singleton
+
+data class ImageInfo(
+    val uri: Uri,
+    val filename: String
+)
 
 @Singleton
 class MagImageStore @Inject constructor(
@@ -38,6 +41,44 @@ class MagImageStore @Inject constructor(
                 MediaStore.Images.Media.getBitmap(contentResolver, uri)
             }
         }.getOrNull()
+    }
+
+    fun getImageInfoInGallery(): List<ImageInfo> {
+        val imageInfoList = mutableListOf<ImageInfo>()
+
+        val collection =
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                MediaStore.Images.Media.getContentUri(
+                    MediaStore.VOLUME_EXTERNAL
+                )
+            } else {
+                MediaStore.Images.Media.EXTERNAL_CONTENT_URI
+            }
+
+        val projection = arrayOf(
+            MediaStore.Images.Media._ID,
+            MediaStore.Images.Media.DISPLAY_NAME
+        )
+
+        contentResolver.query(
+            collection,
+            projection,
+            null, null, null
+        )?.use { cursor ->
+            val idColumn = cursor.getColumnIndexOrThrow(MediaStore.Images.Media._ID)
+            val nameColumn = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DISPLAY_NAME)
+            while (cursor.moveToNext()) {
+                val id = cursor.getLong(idColumn)
+                val name = cursor.getString(nameColumn)
+
+                val uri = ContentUris.withAppendedId(
+                    MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
+                    id
+                )
+                imageInfoList += ImageInfo(uri, name)
+            }
+        }
+        return imageInfoList
     }
 
     fun saveBitmapAsPng(
