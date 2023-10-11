@@ -33,12 +33,13 @@ fun NavController.navigateToResult(
 
 fun NavGraphBuilder.resultScreen() {
     composable(
-        route = "$RESULT_NAVIGATION_ROUTE/{$targetImageUriArg}" +
+        route = "$RESULT_NAVIGATION_ROUTE" +
+                "/{$targetImageUriArg}" +
                 "/{$materialImageUrisArg}" +
                 "/{$gridSizeArg}",
         arguments = listOf(
             navArgument(targetImageUriArg) { type = NavType.StringType },
-            navArgument(materialImageUrisArg) { type = NavType.StringArrayType },
+            navArgument(materialImageUrisArg) { type = NavType.StringType },
             navArgument(gridSizeArg) { type = NavType.IntType }
         )
     ) {

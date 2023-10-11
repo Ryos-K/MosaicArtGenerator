@@ -34,7 +34,7 @@ class ResultArgs(
     constructor(savedStateHandle: SavedStateHandle) :
             this(
                 Uri.parse(checkNotNull(savedStateHandle[targetImageUriArg])),
-                (checkNotNull(savedStateHandle[targetImageUriArg]) as String).split(",").map { Uri.parse(it) },
+                (checkNotNull(savedStateHandle[materialImageUrisArg]) as String).split(",").map { Uri.parse(it) },
                 checkNotNull(savedStateHandle[gridSizeArg])
             )
 }
@@ -69,6 +69,7 @@ class ResultViewModel @Inject constructor(
     }
 
     private fun generateMosaicArt() {
+        Log.d("", "size = ${materialImageUris.size}" )
         viewModelScope.launch(Dispatchers.Default) {
             materialImageUris.forEach {
                 generator.applyMaterialImage(
