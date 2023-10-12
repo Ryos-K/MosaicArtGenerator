@@ -38,19 +38,6 @@ fun SelectScreen(
     val materialImageUriSet = viewModel.materialImageUriSet.value
     val gridSize = viewModel.gridSize.intValue
 
-    val targetImageLauncher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.GetContent()
-    ) { uri: Uri? ->
-        viewModel.updateTargetImageUri(uri)
-    }
-
-    val materialImageLauncher =
-        rememberLauncherForActivityResult(
-            contract = ActivityResultContracts.GetMultipleContents()
-        ) { uris: List<Uri> ->
-            viewModel.addMaterialImageUri(uris)
-        }
-
     var current by remember { mutableStateOf<SelectRoute>(SelectRoute.SelectTarget) }
 
     val progress by animateFloatAsState(
@@ -79,15 +66,15 @@ fun SelectScreen(
                 uri = targetImageUri,
                 gridSize = gridSize,
                 cropRect = IntRect(0, 0, 0, 0),
-                onClickSelect = { targetImageLauncher.launch("image/*") },
                 onSlide = {},
-                onMoveRect = {}
+                onMoveRect = {},
+                updateTargetImageUri = viewModel::updateTargetImageUri
             )
 
             SelectRoute.SelectMaterial -> SelectMaterialScreen(
                 modifier = Modifier.weight(1f),
                 uriSet = materialImageUriSet,
-                onClickSelect = { materialImageLauncher.launch("image/*") }
+                addMaterialImageUri = viewModel::addMaterialImageUri
             )
 
             SelectRoute.Confirm -> ConfirmScreen(

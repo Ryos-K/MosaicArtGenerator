@@ -1,6 +1,8 @@
 package com.ry05k2ulv.myapplication.ui.generate.select
 
 import android.net.Uri
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -28,10 +30,16 @@ internal fun SelectTargetScreen(
     uri: Uri?,
     gridSize: Int,
     cropRect: IntRect,
-    onClickSelect: () -> Unit,
     onSlide: (Int) -> Unit,
-    onMoveRect: (IntRect) -> Unit
+    onMoveRect: (IntRect) -> Unit,
+    updateTargetImageUri: (Uri?) -> Unit
 ) {
+    val targetImageLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.GetContent()
+    ) { uri: Uri? ->
+        updateTargetImageUri(uri)
+    }
+
     Column(modifier, horizontalAlignment = Alignment.CenterHorizontally) {
         Box(
             Modifier
@@ -41,7 +49,7 @@ internal fun SelectTargetScreen(
             contentAlignment = Alignment.Center
         ) {
             if (uri == null) {
-                TextButton(onClick = onClickSelect) {
+                TextButton(onClick = { targetImageLauncher.launch("image/*") }) {
                     Text("Select Image")
                 }
             } else {
@@ -50,7 +58,9 @@ internal fun SelectTargetScreen(
         }
         Spacer(Modifier.height(8.dp))
         Text("Grid Size : $gridSize")
+
         Slider(value = gridSize.toFloat(), onValueChange = { onSlide(it.roundToInt()) })
+
     }
 }
 

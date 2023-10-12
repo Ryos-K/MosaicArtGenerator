@@ -2,6 +2,8 @@ package com.ry05k2ulv.myapplication.ui.generate.select
 
 import android.net.Uri
 import android.util.Log
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -31,8 +33,14 @@ import coil.compose.rememberAsyncImagePainter
 fun SelectMaterialScreen(
     modifier: Modifier,
     uriSet: Set<Uri>,
-    onClickSelect: () -> Unit
+    addMaterialImageUri: (List<Uri>) -> Unit
 ) {
+    val materialImageLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.GetMultipleContents()
+    ) { uris: List<Uri> ->
+        addMaterialImageUri(uris)
+    }
+
     Column(
         modifier
     ) {
@@ -58,7 +66,7 @@ fun SelectMaterialScreen(
         }
 
 
-        Button(onClick = onClickSelect) {
+        Button(onClick = { materialImageLauncher.launch("image/*")}) {
             Text("Select Material Image", style = MaterialTheme.typography.labelLarge)
         }
     }
