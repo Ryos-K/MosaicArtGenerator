@@ -4,6 +4,7 @@ import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -16,6 +17,7 @@ import androidx.compose.material.icons.filled.NavigateBefore
 import androidx.compose.material.icons.filled.NavigateNext
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LinearProgressIndicator
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -74,7 +76,9 @@ fun SelectScreen(
         Row(
             Modifier
                 .fillMaxWidth()
-                .height(64.dp), horizontalArrangement = Arrangement.SpaceBetween
+                .height(64.dp)
+                .background(MaterialTheme.colorScheme.secondaryContainer),
+            horizontalArrangement = Arrangement.SpaceBetween
         ) {
             TextButton(
                 onClick = {

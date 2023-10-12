@@ -1,13 +1,18 @@
 package com.ry05k2ulv.myapplication.ui.generate.select
 
 import android.net.Uri
+import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.animation.core.spring
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
@@ -17,12 +22,15 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AddPhotoAlternate
@@ -35,6 +43,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateMapOf
@@ -70,17 +79,23 @@ fun SelectMaterialScreen(
     var selectMode by remember(selectedImageUris) { mutableStateOf(selectedImageUris.isNotEmpty()) }
     var gridColNum by remember { mutableIntStateOf(INITIAL_GRID_COLUMNS) }
 
+    val lazyGridState = rememberLazyGridState()
+    val showOperationBar by remember(lazyGridState) {
+        derivedStateOf { lazyGridState.firstVisibleItemIndex == 0 }
+    }
+
     val uris = uiState.imageUriSet
 
-    Column(
+    Box(
         modifier
     ) {
 
+
         LazyVerticalGrid(
             columns = GridCells.Fixed(gridColNum),
-            Modifier
-                .weight(1f),
-            contentPadding = PaddingValues(2.dp)
+            Modifier.fillMaxSize(),
+            contentPadding = PaddingValues(2.dp),
+            state = lazyGridState
         ) {
             items(uris.toList()) { uri ->
                 ImageItem(
@@ -100,19 +115,26 @@ fun SelectMaterialScreen(
         }
 
         OperationBar(
+            modifier = Modifier.align(Alignment.TopCenter),
             selectMode = selectMode,
             onPictureClick = { materialImageLauncher.launch("image/*") },
-            onSelectionToggle = { selectedImageUris = if (selectMode) setOf() else uris.toSet() },
+            onSelectionToggle = {
+                selectedImageUris = if (selectMode) setOf() else uris.toSet()
+            },
             onRemoveClick = {
                 removeMaterials(selectedImageUris)
                 selectedImageUris = setOf()
             },
-            onGridSwitch = { gridColNum = when(gridColNum) {
-                in MIN_GRID_COLUMNS until MAX_GRID_COLUMNS -> gridColNum + 1
-                MAX_GRID_COLUMNS -> MIN_GRID_COLUMNS
-                else -> INITIAL_GRID_COLUMNS
-            } }
+            onGridSwitch = {
+                gridColNum = when (gridColNum) {
+                    in MIN_GRID_COLUMNS until MAX_GRID_COLUMNS -> gridColNum + 1
+                    MAX_GRID_COLUMNS -> MIN_GRID_COLUMNS
+                    else -> INITIAL_GRID_COLUMNS
+                }
+            },
+            shouldShow = showOperationBar
         )
+
     }
 }
 
@@ -160,23 +182,34 @@ private fun ImageItem(
 
 @Composable
 private fun OperationBar(
+    modifier: Modifier = Modifier,
     selectMode: Boolean,
     onPictureClick: () -> Unit,
     onSelectionToggle: () -> Unit,
     onRemoveClick: () -> Unit,
-    onGridSwitch: () -> Unit
+    onGridSwitch: () -> Unit,
+    shouldShow: Boolean
 ) {
-    val itemModifier = Modifier.padding(8.dp)
+    val itemModifier = Modifier
+        .padding(8.dp)
+        .height(48.dp)
     Row(
-        Modifier
-            .height(64.dp)
+        modifier
+            .animateContentSize(animationSpec = spring(dampingRatio = 2f))
             .fillMaxWidth()
+            .background(MaterialTheme.colorScheme.background.copy(alpha = 0.5f))
     ) {
-        PictureButton(onClick = onPictureClick, itemModifier)
-        SelectionToggleButton(onClick = onSelectionToggle, selectMode = selectMode, itemModifier)
-        RemoveButton(onClick = onRemoveClick, selectMode = selectMode, itemModifier)
-        Spacer(modifier = Modifier.weight(1f))
-        GridSwitchButton(onClick = onGridSwitch, itemModifier)
+        if (shouldShow){
+            PictureButton(onClick = onPictureClick, itemModifier)
+            SelectionToggleButton(
+                onClick = onSelectionToggle,
+                selectMode = selectMode,
+                itemModifier
+            )
+            RemoveButton(onClick = onRemoveClick, selectMode = selectMode, itemModifier)
+            Spacer(modifier = Modifier.weight(1f))
+            GridSwitchButton(onClick = onGridSwitch, itemModifier)
+        }
     }
 }
 
