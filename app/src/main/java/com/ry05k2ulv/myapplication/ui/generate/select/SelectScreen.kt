@@ -19,6 +19,7 @@ import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -35,31 +36,15 @@ fun SelectScreen(
     onNext: (Uri, Set<Uri>, Int) -> Unit,
 ) {
     val targetImageUri = viewModel.targetImageUri.value
-    val materialImageUriSet = viewModel.materialImageUriSet.value
+    val selectMaterialUiState = viewModel.materialUiState.collectAsState().value
     val gridSize = viewModel.gridSize.intValue
 
     var current by remember { mutableStateOf<SelectRoute>(SelectRoute.SelectTarget) }
-
-    val progress by animateFloatAsState(
-        when (current) {
-            SelectRoute.SelectTarget -> 0f
-            SelectRoute.SelectMaterial -> 0.5f
-            SelectRoute.Confirm -> 1f
-        }, label = "Progress"
-    )
 
     Column(
         Modifier.fillMaxSize(),
         verticalArrangement = Arrangement.SpaceBetween
     ) {
-        LinearProgressIndicator(
-            progress = progress,
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp)
-                .height(4.dp)
-        )
-
         when (current) {
             SelectRoute.SelectTarget -> SelectTargetScreen(
                 modifier = Modifier.weight(1f),
@@ -73,15 +58,16 @@ fun SelectScreen(
 
             SelectRoute.SelectMaterial -> SelectMaterialScreen(
                 modifier = Modifier.weight(1f),
-                uriSet = materialImageUriSet,
-                addMaterialImageUri = viewModel::addMaterialImageUri
+                uiState = selectMaterialUiState,
+                addMaterials = viewModel::addMaterials,
+                removeMaterials = viewModel::removeMaterials
             )
 
             SelectRoute.Confirm -> ConfirmScreen(
                 modifier = Modifier.weight(1f),
                 targetUri = targetImageUri,
                 gridSize = gridSize,
-                materialUriSet = materialImageUriSet
+                materialUriSet = selectMaterialUiState.imageUriSet
             )
         }
 
@@ -110,7 +96,7 @@ fun SelectScreen(
                         SelectRoute.SelectMaterial -> current = SelectRoute.Confirm
                         SelectRoute.Confirm -> {
                             if (targetImageUri != null)
-                                onNext(targetImageUri, materialImageUriSet, gridSize)
+                                onNext(targetImageUri, selectMaterialUiState.imageUriSet, gridSize)
                         }
                     }
                 },
