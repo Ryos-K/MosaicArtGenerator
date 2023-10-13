@@ -18,13 +18,23 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Save
 import androidx.compose.material.icons.filled.Share
+import androidx.compose.material3.Button
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.SheetState
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
@@ -32,14 +42,21 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import kotlinx.coroutines.launch
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ResultScreen(
     viewModel: ResultViewModel = hiltViewModel()
 ) {
+    val scope = rememberCoroutineScope()
+
     val result = viewModel.result.collectAsState().value
     val progress = viewModel.progress.value
     val running = viewModel.running.value
+
+    var showBottomSheet by remember { mutableStateOf(false) }
+    val sheetState = rememberModalBottomSheetState()
 
     Box(Modifier.fillMaxSize()) {
         ProgressSection(
@@ -62,10 +79,20 @@ fun ResultScreen(
                 .fillMaxWidth()
                 .padding(bottom = 32.dp),
             onShareClick = { /*TODO*/ },
-            onSaveClick = { /*TODO*/ },
+            onSaveClick = { showBottomSheet = true },
             enabled = !running
         )
     }
+    SaveBottomSheet(
+        onDismiss = { showBottomSheet = false },
+        onSave = {
+            scope.launch { sheetState.hide() }
+                .invokeOnCompletion { showBottomSheet = false }
+            viewModel.saveResult(it);
+        },
+        sheetState = sheetState,
+        shouldShow = showBottomSheet
+    )
 }
 
 @Composable
@@ -141,9 +168,9 @@ private fun OperationBar(
     onSaveClick: () -> Unit,
     enabled: Boolean
 ) {
-    Row(modifier, horizontalArrangement = Arrangement.SpaceEvenly) {
-        ShareButton(onShareClick = onShareClick, enabled = enabled)
-        SaveButton(onSaveClick = onSaveClick, enabled = enabled)
+    Row(modifier) {
+        ShareButton(onShareClick = onShareClick, modifier = Modifier.weight(1f), enabled = enabled)
+        SaveButton(onSaveClick = onSaveClick, modifier = Modifier.weight(1f), enabled = enabled)
     }
 }
 
@@ -160,6 +187,7 @@ private fun ShareButton(
                 imageVector = Icons.Default.Share,
                 contentDescription = "Share Image"
             )
+            Text("Share")
         }
     }
 }
@@ -181,3 +209,27 @@ private fun SaveButton(
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun SaveBottomSheet(
+    onDismiss: () -> Unit,
+    onSave: (String) -> Unit,
+    sheetState: SheetState,
+    shouldShow: Boolean = false,
+) {
+    if (!shouldShow) return
+
+    var filename by remember { mutableStateOf("") }
+
+    ModalBottomSheet(onDismissRequest = onDismiss, sheetState = sheetState) {
+        Text("Save Image", style = MaterialTheme.typography.titleLarge)
+        TextField(value = filename, onValueChange = { filename = it })
+        Button(onClick = {
+            if (filename != "")
+                onSave(filename)
+        }
+        ) {
+            Text(text = "Save")
+        }
+    }
+}
