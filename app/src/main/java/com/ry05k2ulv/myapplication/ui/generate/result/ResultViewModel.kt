@@ -4,6 +4,7 @@ import android.graphics.Bitmap
 import android.net.Uri
 import android.util.Log
 import androidx.compose.runtime.mutableFloatStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -52,6 +53,9 @@ class ResultViewModel @Inject constructor(
     var progress = mutableFloatStateOf(0f)
         private set
 
+    var running = mutableStateOf(true)
+        private set
+
     init {
         val args = ResultArgs(savedStateHandle)
         targetImageUri = args.targetImageUri
@@ -80,6 +84,8 @@ class ResultViewModel @Inject constructor(
                 delay(20)
                 progress.value = (index + 1f) / materialImageUris.size
             }
+            progress.value = 1f
+            running.value = false
         }
     }
 

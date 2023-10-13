@@ -15,6 +15,11 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Save
+import androidx.compose.material.icons.filled.Share
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -34,30 +39,63 @@ fun ResultScreen(
 ) {
     val result = viewModel.result.collectAsState().value
     val progress = viewModel.progress.value
+    val running = viewModel.running.value
 
-    Column(Modifier.fillMaxSize(), horizontalAlignment = Alignment.CenterHorizontally) {
-        ProgressText(
+    Box(Modifier.fillMaxSize()) {
+        ProgressSection(
             modifier = Modifier
-                .padding(16.dp)
-                .fillMaxWidth(), progress = progress
-        )
-        GradientProgressBar(
-            progress = progress, modifier = Modifier
-                .padding(16.dp)
-                .height(4.dp)
-                .fillMaxWidth()
+                .align(Alignment.TopCenter)
+                .padding(16.dp), progress = progress
         )
         if (result != null)
-            Image(bitmap = result.asImageBitmap(), contentDescription = null)
+            Image(
+                bitmap = result.asImageBitmap(),
+                contentDescription = null,
+                modifier = Modifier.align(
+                    Alignment.Center
+                )
+            )
+
+        OperationBar(
+            modifier = Modifier
+                .align(Alignment.BottomCenter)
+                .fillMaxWidth()
+                .padding(bottom = 32.dp),
+            onShareClick = { /*TODO*/ },
+            onSaveClick = { /*TODO*/ },
+            enabled = !running
+        )
     }
 }
 
 @Composable
-fun ProgressText(
+private fun ProgressSection(modifier: Modifier, progress: Float) {
+    val animateProgress by animateFloatAsState(
+        targetValue = progress,
+        animationSpec = spring(dampingRatio = 2f),
+        label = ""
+    )
+    Column(modifier) {
+        ProgressText(
+            modifier = Modifier
+                .padding(16.dp)
+                .fillMaxWidth(),
+            progress = animateProgress
+        )
+        GradientProgressBar(
+            progress = animateProgress, modifier = Modifier
+                .padding(16.dp)
+                .height(8.dp)
+                .fillMaxWidth()
+        )
+    }
+}
+
+@Composable
+private fun ProgressText(
     modifier: Modifier,
     progress: Float
 ) {
-    val progressPercent = (progress * 100).toInt()
     Row(modifier, horizontalArrangement = Arrangement.SpaceEvenly) {
         Text(
             "Progress :",
@@ -65,7 +103,7 @@ fun ProgressText(
             style = MaterialTheme.typography.titleMedium
         )
         Text(
-            "$progressPercent (%)",
+            "${(progress * 100).toInt()} (%)",
             Modifier.padding(4.dp),
             style = MaterialTheme.typography.titleMedium
         )
@@ -73,7 +111,7 @@ fun ProgressText(
 }
 
 @Composable
-fun GradientProgressBar(
+private fun GradientProgressBar(
     progress: Float,
     modifier: Modifier = Modifier
         .height(4.dp)
@@ -86,13 +124,60 @@ fun GradientProgressBar(
     ),
     background: Color = Color.Gray
 ) {
-    val animateProgress by animateFloatAsState(targetValue = (1 - progress), animationSpec = spring(dampingRatio = 2f), label = "")
     Box(modifier.background(brush), contentAlignment = Alignment.CenterEnd) {
         Box(
             Modifier
                 .fillMaxHeight()
-                .fillMaxWidth((animateProgress))
+                .fillMaxWidth((1 - progress))
                 .background(background)
         )
     }
 }
+
+@Composable
+private fun OperationBar(
+    modifier: Modifier,
+    onShareClick: () -> Unit,
+    onSaveClick: () -> Unit,
+    enabled: Boolean
+) {
+    Row(modifier, horizontalArrangement = Arrangement.SpaceEvenly) {
+        ShareButton(onShareClick = onShareClick, enabled = enabled)
+        SaveButton(onSaveClick = onSaveClick, enabled = enabled)
+    }
+}
+
+@Composable
+private fun ShareButton(
+    onShareClick: () -> Unit,
+    modifier: Modifier = Modifier,
+    enabled: Boolean = true
+) {
+
+    IconButton(onClick = onShareClick, modifier.height(64.dp), enabled) {
+        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+            Icon(
+                imageVector = Icons.Default.Share,
+                contentDescription = "Share Image"
+            )
+        }
+    }
+}
+
+@Composable
+private fun SaveButton(
+    onSaveClick: () -> Unit,
+    modifier: Modifier = Modifier,
+    enabled: Boolean = true
+) {
+    IconButton(onClick = onSaveClick, modifier.height(64.dp), enabled) {
+        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+            Icon(
+                imageVector = Icons.Default.Save,
+                contentDescription = "Save Image"
+            )
+            Text(text = "Save")
+        }
+    }
+}
+
