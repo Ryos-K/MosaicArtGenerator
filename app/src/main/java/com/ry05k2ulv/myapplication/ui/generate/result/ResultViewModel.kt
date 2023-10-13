@@ -1,19 +1,15 @@
 package com.ry05k2ulv.myapplication.ui.generate.result
 
-import android.content.Context
 import android.graphics.Bitmap
-import android.graphics.ImageDecoder
 import android.net.Uri
-import android.os.Build
-import android.provider.MediaStore
 import android.util.Log
+import androidx.compose.runtime.mutableFloatStateOf
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ry05k2ulv.myapplication.generator.MosaicArtGenerator
 import com.ry05k2ulv.myapplication.imagestore.MagImageStore
 import dagger.hilt.android.lifecycle.HiltViewModel
-import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -34,7 +30,8 @@ class ResultArgs(
     constructor(savedStateHandle: SavedStateHandle) :
             this(
                 Uri.parse(checkNotNull(savedStateHandle[targetImageUriArg])),
-                (checkNotNull(savedStateHandle[materialImageUrisArg]) as String).split(",").map { Uri.parse(it) },
+                (checkNotNull(savedStateHandle[materialImageUrisArg]) as String).split(",")
+                    .map { Uri.parse(it) },
                 checkNotNull(savedStateHandle[gridSizeArg])
             )
 }
@@ -43,7 +40,7 @@ class ResultArgs(
 class ResultViewModel @Inject constructor(
     private val magImageStore: MagImageStore,
     savedStateHandle: SavedStateHandle
-): ViewModel() {
+) : ViewModel() {
     val result = MutableStateFlow<Bitmap?>(null)
 
     private val targetImageUri: Uri
@@ -51,6 +48,9 @@ class ResultViewModel @Inject constructor(
     private val materialImageUris: List<Uri>
 
     private val gridSize: Int
+
+    var progress = mutableFloatStateOf(0f)
+        private set
 
     init {
         val args = ResultArgs(savedStateHandle)
@@ -60,7 +60,8 @@ class ResultViewModel @Inject constructor(
     }
 
     private val generator = MosaicArtGenerator(
-        targetImage = magImageStore.getBitmapOrNull(targetImageUri) ?: throw FileNotFoundException(),
+        targetImage = magImageStore.getBitmapOrNull(targetImageUri)
+            ?: throw FileNotFoundException(),
         gridSize = gridSize
     )
 
@@ -69,20 +70,26 @@ class ResultViewModel @Inject constructor(
     }
 
     private fun generateMosaicArt() {
-        Log.d("", "size = ${materialImageUris.size}" )
+        Log.d("", "size = ${materialImageUris.size}")
         viewModelScope.launch(Dispatchers.Default) {
-            materialImageUris.forEach {
+            materialImageUris.forEachIndexed { index, it ->
                 generator.applyMaterialImage(
-                    magImageStore.getBitmapOrNull(it) ?: return@forEach
+                    magImageStore.getBitmapOrNull(it) ?: return@forEachIndexed
                 )
                 result.update { generator.getResultCopy() }
                 delay(20)
+                progress.value = (index + 1f) / materialImageUris.size
             }
+        }
+    }
+
+    fun saveResult(filename: String) {
+        viewModelScope.launch {
             val bitmap = result.value
             if (bitmap != null) {
                 magImageStore.saveBitmapAsPng(
                     bitmap = bitmap,
-                    "hoge.png"
+                    filename = filename
                 )
             }
         }
