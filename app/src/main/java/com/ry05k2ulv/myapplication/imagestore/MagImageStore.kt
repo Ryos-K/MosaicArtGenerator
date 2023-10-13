@@ -9,6 +9,8 @@ import android.net.Uri
 import android.os.Build
 import android.os.Environment
 import android.provider.MediaStore
+import android.util.Log
+import androidx.core.content.FileProvider
 import dagger.hilt.android.qualifiers.ApplicationContext
 import java.io.File
 import java.io.IOException
@@ -55,15 +57,17 @@ class MagImageStore @Inject constructor(
                 MediaStore.Images.Media.EXTERNAL_CONTENT_URI
             }
 
+        val selection = "${MediaStore.Images.Media.DATA} like ?"
+
+        val selectionArgs = arrayOf("%${Environment.DIRECTORY_PICTURES}/$MAG_DIRECTORY/%")
+
         val projection = arrayOf(
             MediaStore.Images.Media._ID,
             MediaStore.Images.Media.DISPLAY_NAME
         )
 
         contentResolver.query(
-            collection,
-            projection,
-            null, null, null
+            collection, projection, selection, selectionArgs, null
         )?.use { cursor ->
             val idColumn = cursor.getColumnIndexOrThrow(MediaStore.Images.Media._ID)
             val nameColumn = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DISPLAY_NAME)
@@ -84,27 +88,52 @@ class MagImageStore @Inject constructor(
     fun saveBitmapAsPng(
         bitmap: Bitmap,
         filename: String,
-    ) {
+    ): Uri {
+        val uri: Uri
         val outputStream: OutputStream =
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-            val contentValues = ContentValues().apply {
-                put(MediaStore.MediaColumns.DISPLAY_NAME, filename.suffixPng())
-                put(MediaStore.MediaColumns.MIME_TYPE, "image/png")
-                put(
-                    MediaStore.MediaColumns.RELATIVE_PATH,
-                    "${Environment.DIRECTORY_PICTURES}/$MAG_DIRECTORY"
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                val contentValues = ContentValues().apply {
+                    put(MediaStore.MediaColumns.DISPLAY_NAME, filename.suffixPng())
+                    put(MediaStore.MediaColumns.MIME_TYPE, "image/png")
+                    put(
+                        MediaStore.MediaColumns.RELATIVE_PATH,
+                        "${Environment.DIRECTORY_PICTURES}/$MAG_DIRECTORY"
+                    )
+                }
+                uri = contentResolver.insert(
+                    MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
+                    contentValues
                 )
+                    ?: throw IOException("Failed to insert uri.")
+                uri.let { contentResolver.openOutputStream(it) }
+                    ?: throw IOException("Failed to open output stream.")
+            } else {
+                val imageDir =
+                    Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES)
+                val file = File("$imageDir/$MAG_DIRECTORY", filename.suffixPng())
+                uri = Uri.fromFile(file)
+                file.outputStream()
             }
-            contentResolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, contentValues)
-                ?.let { contentResolver.openOutputStream(it) }
-                ?: throw IOException("Failed to open output stream.")
-        } else {
-            val imageDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES)
-            val file = File("$imageDir/$MAG_DIRECTORY", filename.suffixPng())
-            file.outputStream()
-        }
         bitmap.compress(Bitmap.CompressFormat.PNG, 100, outputStream)
         outputStream.close()
+        Log.d(null, uri.toString())
+        return uri
+    }
+
+    fun saveBitmapExternalAsPng(
+        bitmap: Bitmap
+    ): Uri {
+        val filename = "for_sharing"
+        val path = context.getExternalFilesDir(null) ?: throw IOException("Failed to access external files directory.")
+        val file = File(path, filename.suffixPng())
+//        path.mkdirs()
+
+        if(file.exists()) file.delete()
+
+        val outputStream = file.outputStream()
+        bitmap.compress(Bitmap.CompressFormat.PNG, 100, outputStream)
+        outputStream.close()
+        return FileProvider.getUriForFile(context, context.applicationContext.packageName + ".provider", file)
     }
 
     private fun String.suffixPng(): String =

@@ -17,6 +17,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.io.FileNotFoundException
+import java.io.IOException
 import javax.inject.Inject
 
 const val targetImageUriArg = "targetImageUri"
@@ -99,6 +100,12 @@ class ResultViewModel @Inject constructor(
                 )
             }
         }
+    }
+
+    fun saveResultExternal(): Uri {
+
+        val bitmap = result.value ?: throw IOException("Failed to save result.")
+        return magImageStore.saveBitmapExternalAsPng(bitmap)
     }
 }
 

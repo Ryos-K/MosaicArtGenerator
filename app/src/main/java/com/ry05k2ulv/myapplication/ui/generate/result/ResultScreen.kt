@@ -1,5 +1,10 @@
 package com.ry05k2ulv.myapplication.ui.generate.result
 
+import android.Manifest
+import android.content.Intent
+import android.content.pm.PackageManager
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.spring
 import androidx.compose.foundation.Image
@@ -15,6 +20,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Save
 import androidx.compose.material.icons.filled.Share
@@ -37,10 +43,13 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
+import androidx.core.content.ContextCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 import kotlinx.coroutines.launch
 
@@ -50,6 +59,7 @@ fun ResultScreen(
     viewModel: ResultViewModel = hiltViewModel()
 ) {
     val scope = rememberCoroutineScope()
+    val context = LocalContext.current
 
     val result = viewModel.result.collectAsState().value
     val progress = viewModel.progress.value
@@ -58,31 +68,16 @@ fun ResultScreen(
     var showBottomSheet by remember { mutableStateOf(false) }
     val sheetState = rememberModalBottomSheetState()
 
-    Box(Modifier.fillMaxSize()) {
-        ProgressSection(
-            modifier = Modifier
-                .align(Alignment.TopCenter)
-                .padding(16.dp), progress = progress
-        )
-        if (result != null)
-            Image(
-                bitmap = result.asImageBitmap(),
-                contentDescription = null,
-                modifier = Modifier.align(
-                    Alignment.Center
-                )
-            )
-
-        OperationBar(
-            modifier = Modifier
-                .align(Alignment.BottomCenter)
-                .fillMaxWidth()
-                .padding(bottom = 32.dp),
-            onShareClick = { /*TODO*/ },
-            onSaveClick = { showBottomSheet = true },
-            enabled = !running
-        )
+    val launcher = rememberLauncherForActivityResult(
+        ActivityResultContracts.RequestPermission()
+    ) { isGranted ->
+        if (isGranted) {
+            // Open camera
+        } else {
+            // Show dialog
+        }
     }
+
     SaveBottomSheet(
         onDismiss = { showBottomSheet = false },
         onSave = {
@@ -93,6 +88,48 @@ fun ResultScreen(
         sheetState = sheetState,
         shouldShow = showBottomSheet
     )
+
+    Box(Modifier.fillMaxSize()) {
+        if (result != null)
+            Image(
+                bitmap = result.asImageBitmap(),
+                contentDescription = null,
+                modifier = Modifier.align(
+                    Alignment.Center
+                )
+            )
+
+        ProgressSection(
+            modifier = Modifier
+                .align(Alignment.TopCenter)
+                .padding(16.dp),
+            progress = progress
+        )
+
+        OperationBar(
+            modifier = Modifier
+                .align(Alignment.BottomCenter)
+                .fillMaxWidth()
+                .padding(bottom = 32.dp),
+            onShareClick = {
+                if (ContextCompat.checkSelfPermission(context, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+                    launcher.launch(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                    return@OperationBar
+                }
+
+                val uri = viewModel.saveResultExternal()
+                val sendIntent = Intent().apply {
+                    action = Intent.ACTION_SEND
+                    putExtra(Intent.EXTRA_STREAM, uri)
+                    addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+                    type = "image/png"
+                }
+                context.startActivity(sendIntent)
+            },
+            onSaveClick = { showBottomSheet = true },
+            enabled = !running
+        )
+    }
 }
 
 @Composable
@@ -113,6 +150,7 @@ private fun ProgressSection(modifier: Modifier, progress: Float) {
             progress = animateProgress, modifier = Modifier
                 .padding(16.dp)
                 .height(8.dp)
+                .clip(RoundedCornerShape(4.dp))
                 .fillMaxWidth()
         )
     }
@@ -213,6 +251,7 @@ private fun SaveButton(
 @Composable
 private fun SaveBottomSheet(
     onDismiss: () -> Unit,
+    modifier: Modifier = Modifier,
     onSave: (String) -> Unit,
     sheetState: SheetState,
     shouldShow: Boolean = false,
@@ -221,7 +260,7 @@ private fun SaveBottomSheet(
 
     var filename by remember { mutableStateOf("") }
 
-    ModalBottomSheet(onDismissRequest = onDismiss, sheetState = sheetState) {
+    ModalBottomSheet(onDismissRequest = onDismiss, modifier = modifier, sheetState = sheetState) {
         Text("Save Image", style = MaterialTheme.typography.titleLarge)
         TextField(value = filename, onValueChange = { filename = it })
         Button(onClick = {
