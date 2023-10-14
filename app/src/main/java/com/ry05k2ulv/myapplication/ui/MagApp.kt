@@ -15,6 +15,10 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarColors
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.navigation.NavOptions
@@ -24,15 +28,24 @@ import com.ry05k2ulv.myapplication.navigation.MagNavHost
 import com.ry05k2ulv.myapplication.ui.generate.select.SELECT_NAVIGATION_ROUTE
 import com.ry05k2ulv.myapplication.ui.home.HOME_NAVIGATION_ROUTE
 import com.ry05k2ulv.myapplication.ui.home.navigateToHome
+import com.ry05k2ulv.myapplication.ui.settings.SettingsDialog
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MagApp() {
     val navController = rememberNavController()
-    val navOptions = NavOptions.Builder().setLaunchSingleTop(true).setPopUpTo(HOME_NAVIGATION_ROUTE, false).build()
+    val navOptions =
+        NavOptions.Builder().setLaunchSingleTop(true).setPopUpTo(HOME_NAVIGATION_ROUTE, false)
+            .build()
 
     val current = navController.currentBackStackEntryAsState().value?.destination?.route
         ?: HOME_NAVIGATION_ROUTE
+
+    var showSettingsDialog by remember { mutableStateOf(false) }
+
+    if (showSettingsDialog) {
+        SettingsDialog(onDismiss = { showSettingsDialog = false })
+    }
 
     Scaffold(
         topBar = {
@@ -43,7 +56,7 @@ fun MagApp() {
                 onNavigationIconClick = { navController.navigateToHome(navOptions) },
                 actionIcon = Icons.Default.Settings,
                 actionIconDescription = "Settings",
-                onAction = {}
+                onAction = { showSettingsDialog = true }
             )
         }
     ) {
