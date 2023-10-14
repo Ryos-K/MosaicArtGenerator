@@ -87,12 +87,16 @@ dependencies {
     kapt("com.google.dagger:hilt-android-compiler:$hiltVersion")
     implementation("androidx.hilt:hilt-navigation-compose:1.0.0")
 
+    // Add Navigation
     val navVersion = "2.7.4"
     implementation("androidx.navigation:navigation-compose:$navVersion")
 
     // Add Datastore
     implementation("androidx.datastore:datastore:1.0.0")
     implementation("com.google.protobuf:protobuf-javalite:3.19.1")
+
+//    // Add Splashscreen
+//    implementation("androidx.core:core-splashscreen:1.0.1")
 }
 
 kapt {
