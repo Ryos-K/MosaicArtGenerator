@@ -6,6 +6,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -26,6 +27,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.IntRect
 import androidx.compose.ui.unit.dp
@@ -41,7 +43,7 @@ fun SelectScreen(
     val selectMaterialUiState = viewModel.materialUiState.collectAsState().value
     val gridSize = viewModel.gridSize.intValue
 
-    var current by remember { mutableStateOf<SelectRoute>(SelectRoute.SelectTarget) }
+    var current by remember { mutableStateOf(SelectRoute.SelectTarget) }
 
     Column(
         Modifier.fillMaxSize(),
@@ -64,57 +66,94 @@ fun SelectScreen(
                 addMaterials = viewModel::addMaterials,
                 removeMaterials = viewModel::removeMaterials
             )
-
-            SelectRoute.Confirm -> ConfirmScreen(
-                modifier = Modifier.weight(1f),
-                targetUri = targetImageUri,
-                gridSize = gridSize,
-                materialUriSet = selectMaterialUiState.imageUriSet
-            )
         }
 
-        Row(
-            Modifier
-                .fillMaxWidth()
-                .height(64.dp)
-                .background(MaterialTheme.colorScheme.secondaryContainer),
-            horizontalArrangement = Arrangement.SpaceBetween
-        ) {
-            TextButton(
-                onClick = {
-                    when (current) {
-                        SelectRoute.SelectTarget -> onBack()
-                        SelectRoute.SelectMaterial -> current = SelectRoute.SelectTarget
-                        SelectRoute.Confirm -> current = SelectRoute.SelectMaterial
+        BottomBar(
+            modifier = Modifier.height(56.dp),
+            showBackButton = current != SelectRoute.SelectTarget,
+            onBack = {
+                when (current) {
+                    SelectRoute.SelectTarget -> {}
+                    SelectRoute.SelectMaterial -> current = SelectRoute.SelectTarget
+                }
+            },
+            onNext = {
+                when (current) {
+                    SelectRoute.SelectTarget -> current = SelectRoute.SelectMaterial
+                    SelectRoute.SelectMaterial -> {
+                        if (viewModel.isReady()) onNext(
+                            targetImageUri!!, selectMaterialUiState.imageUriSet, gridSize
+                        )
                     }
-                },
-                Modifier.padding(16.dp, 0.dp),
-            ) {
-                Icon(imageVector = Icons.Default.NavigateBefore, contentDescription = null)
-                Text(text = "Back", Modifier)
+                }
+            },
+            nextButtonText = when (current) {
+                SelectRoute.SelectTarget -> "Next"
+                SelectRoute.SelectMaterial -> "Finish"
             }
-            TextButton(
-                onClick = {
-                    when (current) {
-                        SelectRoute.SelectTarget -> current = SelectRoute.SelectMaterial
-                        SelectRoute.SelectMaterial -> current = SelectRoute.Confirm
-                        SelectRoute.Confirm -> {
-                            if (targetImageUri != null)
-                                onNext(targetImageUri, selectMaterialUiState.imageUriSet, gridSize)
-                        }
-                    }
-                },
-                Modifier.padding(16.dp, 0.dp)
-            ) {
-                Text(text = "Next")
-                Icon(imageVector = Icons.Default.NavigateNext, contentDescription = null)
-            }
-        }
+        )
     }
 }
 
-enum class SelectRoute(val no: Int, val title: String) {
-    SelectTarget(1, "Select Target Image"),
-    SelectMaterial(2, "Select Material Image"),
-    Confirm(3, "Confirm Selection")
+@Composable
+private fun BottomBar(
+    modifier: Modifier,
+    showBackButton: Boolean,
+    onBack: () -> Unit,
+    onNext: () -> Unit,
+    backButtonText: String = "Back",
+    nextButtonText: String = "Next"
+) {
+    Box(
+        modifier = modifier,
+    ) {
+        if (showBackButton) {
+            BackButton(
+                text = backButtonText,
+                onClick = onBack,
+                modifier = Modifier.align(Alignment.CenterStart)
+            )
+        }
+        NextButton(
+            text = nextButtonText,
+            onClick = onNext,
+            modifier = Modifier.align(Alignment.CenterEnd)
+        )
+    }
+
+}
+
+@Composable
+private fun BackButton(
+    text: String,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    TextButton(
+        onClick = onClick,
+        modifier = modifier,
+    ) {
+        Icon(imageVector = Icons.Default.NavigateBefore, contentDescription = "Back")
+        Text(text = text)
+    }
+}
+
+@Composable
+private fun NextButton(
+    text: String,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    TextButton(
+        onClick = onClick,
+        modifier = modifier
+    ) {
+        Text(text = text)
+        Icon(imageVector = Icons.Default.NavigateNext, contentDescription = "Next")
+    }
+}
+
+enum class SelectRoute {
+    SelectTarget,
+    SelectMaterial,
 }

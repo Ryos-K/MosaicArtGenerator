@@ -16,6 +16,12 @@ data class SelectMaterialUiState(
 
 @HiltViewModel
 class SelectViewModel @Inject constructor() : ViewModel() {
+    /* -------------------------
+        method for SelectScreen
+       ------------------------- */
+    fun isReady(): Boolean =
+        targetImageUri.value != null && materialUiState.value.imageUriSet.isNotEmpty()
+
     /* -------------------------------------------
         uiState and method for SelectTargetScreen
        -------------------------------------------*/
