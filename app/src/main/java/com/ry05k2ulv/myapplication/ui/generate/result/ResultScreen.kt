@@ -61,14 +61,10 @@ fun ResultScreen(
     val scope = rememberCoroutineScope()
     val context = LocalContext.current
 
-
     val uiState by viewModel.uiState.collectAsState()
     val result = uiState.result
     val progress = uiState.progress
     val running = uiState.running
-
-    var showBottomSheet by remember { mutableStateOf(false) }
-    val sheetState = rememberModalBottomSheetState()
 
     val launcher = rememberLauncherForActivityResult(
         ActivityResultContracts.RequestPermission()
@@ -79,17 +75,6 @@ fun ResultScreen(
             // Show dialog
         }
     }
-
-    SaveBottomSheet(
-        onDismiss = { showBottomSheet = false },
-        onSave = {
-            scope.launch { sheetState.hide() }
-                .invokeOnCompletion { showBottomSheet = false }
-            viewModel.saveResult(it);
-        },
-        sheetState = sheetState,
-        shouldShow = showBottomSheet
-    )
 
     Box(Modifier.fillMaxSize()) {
         if (result != null)
@@ -128,7 +113,7 @@ fun ResultScreen(
                 }
                 context.startActivity(sendIntent)
             },
-            onSaveClick = { showBottomSheet = true },
+            onSaveClick = {  },
             enabled = !running
         )
     }
@@ -244,32 +229,6 @@ private fun SaveButton(
                 imageVector = Icons.Default.Save,
                 contentDescription = "Save Image"
             )
-            Text(text = "Save")
-        }
-    }
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-private fun SaveBottomSheet(
-    onDismiss: () -> Unit,
-    modifier: Modifier = Modifier,
-    onSave: (String) -> Unit,
-    sheetState: SheetState,
-    shouldShow: Boolean = false,
-) {
-    if (!shouldShow) return
-
-    var filename by remember { mutableStateOf("") }
-
-    ModalBottomSheet(onDismissRequest = onDismiss, modifier = modifier, sheetState = sheetState) {
-        Text("Save Image", style = MaterialTheme.typography.titleLarge)
-        TextField(value = filename, onValueChange = { filename = it })
-        Button(onClick = {
-            if (filename != "")
-                onSave(filename)
-        }
-        ) {
             Text(text = "Save")
         }
     }
