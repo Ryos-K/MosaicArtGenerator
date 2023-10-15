@@ -14,6 +14,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.io.FileNotFoundException
@@ -46,7 +47,7 @@ class ResultViewModel @Inject constructor(
     private val magImageStore: MagImageStore,
     savedStateHandle: SavedStateHandle
 ) : ViewModel() {
-    val result = MutableStateFlow<Bitmap?>(null)
+
 
     private val targetImageUri: Uri
 
@@ -56,18 +57,33 @@ class ResultViewModel @Inject constructor(
 
     private val outputSize: Int
 
-    var progress = mutableFloatStateOf(0f)
-        private set
-
-    var running = mutableStateOf(true)
-        private set
-
     init {
         val args = ResultArgs(savedStateHandle)
         targetImageUri = args.targetImageUri
         materialImageUris = args.materialImageUris
         gridSize = args.gridSize
         outputSize = args.outputSize
+    }
+
+    private val _uiState = MutableStateFlow(ResultUiState.default)
+    val uiState = _uiState.asStateFlow()
+
+    private fun updateResult(bitmap: Bitmap) {
+        _uiState.update {
+            it.copy(result = bitmap)
+        }
+    }
+
+    private fun updateProgress(index: Int) {
+        _uiState.update {
+            it.copy(progress = ((index + 1) / materialImageUris.size).toFloat())
+        }
+    }
+
+    private fun updateRunning(running: Boolean) {
+        _uiState.update {
+            it.copy(running = running)
+        }
     }
 
     private val generator = MosaicArtGenerator(
@@ -87,30 +103,46 @@ class ResultViewModel @Inject constructor(
                 generator.applyMaterialImage(
                     magImageStore.getBitmapOrNull(it) ?: return@forEachIndexed
                 )
-                result.update { generator.getResultCopy() }
+                updateResult(generator.getResultCopy())
                 delay(20)
-                progress.value = (index + 1f) / materialImageUris.size
+                updateProgress(index)
             }
-            progress.value = 1f
-            running.value = false
+            updateProgress(materialImageUris.size - 1)
+            updateRunning(false)
         }
     }
 
     fun saveResult(filename: String) {
         viewModelScope.launch {
-            val bitmap = result.value
+            val bitmap = _uiState.value.result
             if (bitmap != null) {
                 magImageStore.saveBitmapAsPng(
                     bitmap = bitmap,
                     filename = filename
-                )
+                ).also { uri ->
+                    _uiState.update {
+                        it.copy(savedUri = uri)
+                    }
+                }
             }
         }
     }
 
     fun saveResultExternal(): Uri {
-        val bitmap = result.value ?: throw IOException("Failed to save result.")
+        val bitmap = uiState.value.result ?: throw IOException("Failed to save result.")
         return magImageStore.saveBitmapExternalAsPng(bitmap)
     }
 }
 
+data class ResultUiState(
+    val result: Bitmap?,
+    val progress: Float,
+    val running: Boolean,
+    val savedUri: Uri?,
+    val savedExternalUri: Uri?
+) {
+    companion object {
+        val default
+            get() = ResultUiState(null, 0f, true, null, null)
+    }
+}

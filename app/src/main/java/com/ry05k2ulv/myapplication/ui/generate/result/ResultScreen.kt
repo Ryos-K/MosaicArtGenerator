@@ -61,9 +61,11 @@ fun ResultScreen(
     val scope = rememberCoroutineScope()
     val context = LocalContext.current
 
-    val result = viewModel.result.collectAsState().value
-    val progress = viewModel.progress.value
-    val running = viewModel.running.value
+
+    val uiState by viewModel.uiState.collectAsState()
+    val result = uiState.result
+    val progress = uiState.progress
+    val running = uiState.running
 
     var showBottomSheet by remember { mutableStateOf(false) }
     val sheetState = rememberModalBottomSheetState()
