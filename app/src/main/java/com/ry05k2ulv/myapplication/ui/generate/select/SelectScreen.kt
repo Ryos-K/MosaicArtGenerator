@@ -1,6 +1,7 @@
 package com.ry05k2ulv.myapplication.ui.generate.select
 
 import android.net.Uri
+import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.core.animateFloatAsState
@@ -19,29 +20,40 @@ import androidx.compose.material.icons.filled.NavigateNext
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.SnackbarResult
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocal
+import androidx.compose.runtime.CompositionLocalMap
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.IntRect
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.ry05k2ulv.myapplication.ui.LocalSnackbarHostState
+import kotlinx.coroutines.launch
 
 @Composable
 fun SelectScreen(
     viewModel: SelectViewModel = hiltViewModel(),
     onBack: () -> Unit,
-    onNext: (Uri, Set<Uri>, Int) -> Unit,
+    onNext: (Uri, Set<Uri>, Int) -> Unit
 ) {
+    val scope = rememberCoroutineScope()
+
     val targetImageUri = viewModel.targetImageUri.value
     val selectMaterialUiState = viewModel.materialUiState.collectAsState().value
     val gridSize = viewModel.gridSize.intValue
+
+    val snackbarHostState: SnackbarHostState = LocalSnackbarHostState.current
 
     var current by remember { mutableStateOf(SelectRoute.SelectTarget) }
 
@@ -69,7 +81,9 @@ fun SelectScreen(
         }
 
         BottomBar(
-            modifier = Modifier.height(56.dp),
+            modifier = Modifier
+                .height(56.dp)
+                .fillMaxWidth(),
             showBackButton = current != SelectRoute.SelectTarget,
             onBack = {
                 when (current) {
@@ -81,9 +95,34 @@ fun SelectScreen(
                 when (current) {
                     SelectRoute.SelectTarget -> current = SelectRoute.SelectMaterial
                     SelectRoute.SelectMaterial -> {
-                        if (viewModel.isReady()) onNext(
-                            targetImageUri!!, selectMaterialUiState.imageUriSet, gridSize
-                        )
+                        when {
+                            targetImageUri == null -> {
+                                scope.launch {
+                                    snackbarHostState.showSnackbar(
+                                        "Target Image is not selected.",
+                                        null,
+                                        true
+                                    )
+                                }
+                            }
+
+                            selectMaterialUiState.imageUriSet.isEmpty() -> {
+                                scope.launch {
+                                    snackbarHostState.showSnackbar(
+                                        "Material Image is not selected.",
+                                        null,
+                                        true
+                                    )
+                                }
+                            }
+
+                            else -> {
+                                onNext(
+                                    targetImageUri!!, selectMaterialUiState.imageUriSet, gridSize
+                                )
+                            }
+                        }
+
                     }
                 }
             },

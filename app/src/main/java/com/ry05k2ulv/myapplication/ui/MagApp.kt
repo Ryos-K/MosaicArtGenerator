@@ -10,11 +10,14 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarColors
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -25,10 +28,13 @@ import androidx.navigation.NavOptions
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.ry05k2ulv.myapplication.navigation.MagNavHost
-import com.ry05k2ulv.myapplication.ui.generate.select.SELECT_NAVIGATION_ROUTE
 import com.ry05k2ulv.myapplication.ui.home.HOME_NAVIGATION_ROUTE
 import com.ry05k2ulv.myapplication.ui.home.navigateToHome
 import com.ry05k2ulv.myapplication.ui.settings.SettingsDialog
+
+internal val LocalSnackbarHostState = compositionLocalOf<SnackbarHostState> {
+    error("No SnackbarHostState")
+}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -38,6 +44,9 @@ fun MagApp() {
         NavOptions.Builder().setLaunchSingleTop(true).setPopUpTo(HOME_NAVIGATION_ROUTE, false)
             .build()
 
+    val snackbarHostState = remember { SnackbarHostState() }
+
+
     val current = navController.currentBackStackEntryAsState().value?.destination?.route
         ?: HOME_NAVIGATION_ROUTE
 
@@ -46,6 +55,7 @@ fun MagApp() {
     if (showSettingsDialog) {
         SettingsDialog(onDismiss = { showSettingsDialog = false })
     }
+
 
     Scaffold(
         topBar = {
@@ -58,14 +68,17 @@ fun MagApp() {
                 actionIconDescription = "Settings",
                 onAction = { showSettingsDialog = true }
             )
-        }
+        },
+        snackbarHost = { SnackbarHost(snackbarHostState) }
     ) {
-        MagNavHost(
-            modifier = Modifier.padding(it),
-            navController = navController,
-            startDestination = HOME_NAVIGATION_ROUTE,
-            navOptions = navOptions
-        )
+        CompositionLocalProvider(LocalSnackbarHostState provides snackbarHostState) {
+            MagNavHost(
+                modifier = Modifier.padding(it),
+                navController = navController,
+                startDestination = HOME_NAVIGATION_ROUTE,
+                navOptions = navOptions
+            )
+        }
     }
 }
 
