@@ -9,7 +9,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.material3.Slider
@@ -27,11 +26,8 @@ import kotlin.math.roundToInt
 @Composable
 internal fun SelectTargetScreen(
     modifier: Modifier,
-    uri: Uri?,
-    gridSize: Int,
-    cropRect: IntRect,
+    uiState: TargetUiState,
     onSlide: (Int) -> Unit,
-    onMoveRect: (IntRect) -> Unit,
     updateTargetImageUri: (Uri?) -> Unit
 ) {
     val targetImageLauncher = rememberLauncherForActivityResult(
@@ -39,6 +35,9 @@ internal fun SelectTargetScreen(
     ) { uri: Uri? ->
         updateTargetImageUri(uri)
     }
+
+    val uri = uiState.imageUri
+    val gridSize = uiState.gridSize
 
     Column(modifier, horizontalAlignment = Alignment.CenterHorizontally) {
         Box(

@@ -58,7 +58,7 @@ const val MAX_GRID_COLUMNS = 4
 @Composable
 fun SelectMaterialScreen(
     modifier: Modifier,
-    uiState: SelectMaterialUiState,
+    uiState: MaterialUiState,
     addMaterials: (List<Uri>) -> Unit,
     removeMaterials: (Set<Uri>) -> Unit
 ) {

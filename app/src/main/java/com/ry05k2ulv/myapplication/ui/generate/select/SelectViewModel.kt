@@ -1,44 +1,44 @@
 package com.ry05k2ulv.myapplication.ui.generate.select
 
 import android.net.Uri
-import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
+import com.ry05k2ulv.myapplication.generator.MosaicArtGenerator
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import javax.inject.Inject
 
-data class SelectMaterialUiState(
-    val imageUriSet: Set<Uri>
-)
-
 @HiltViewModel
 class SelectViewModel @Inject constructor() : ViewModel() {
     /* -------------------------
         method for SelectScreen
        ------------------------- */
-    fun isReady(): Boolean =
-        targetImageUri.value != null && materialUiState.value.imageUriSet.isNotEmpty()
 
     /* -------------------------------------------
         uiState and method for SelectTargetScreen
        -------------------------------------------*/
-    var targetImageUri = mutableStateOf<Uri?>(null)
-        private set
-
-    var gridSize = mutableIntStateOf(32)
+    private val _targetUiState = MutableStateFlow(
+        TargetUiState(null, MosaicArtGenerator.DEFAULT_GRID_SIZE))
+    val targetUiState = _targetUiState.asStateFlow()
 
     fun updateTargetImageUri(uri: Uri?) {
-        targetImageUri.value = uri
+        _targetUiState.update {
+            it.copy(imageUri = uri)
+        }
+    }
+
+    fun updateGridSize(gridSize: Int) {
+        _targetUiState.update {
+            it.copy(gridSize = gridSize)
+        }
     }
 
 
     /* ---------------------------------------------
         uiState and method for SelectMaterialScreen
        --------------------------------------------- */
-    private val _materialUiState = MutableStateFlow(SelectMaterialUiState(setOf()))
+    private val _materialUiState = MutableStateFlow(MaterialUiState(setOf()))
     val materialUiState = _materialUiState.asStateFlow()
 
     fun addMaterials(uris: List<Uri>) {
@@ -57,3 +57,12 @@ class SelectViewModel @Inject constructor() : ViewModel() {
         }
     }
 }
+
+data class TargetUiState(
+    val imageUri: Uri?,
+    val gridSize: Int
+)
+
+data class MaterialUiState(
+    val imageUriSet: Set<Uri>
+)

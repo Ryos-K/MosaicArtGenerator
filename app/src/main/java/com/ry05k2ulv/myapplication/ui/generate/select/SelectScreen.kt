@@ -1,32 +1,20 @@
 package com.ry05k2ulv.myapplication.ui.generate.select
 
 import android.net.Uri
-import android.util.Log
-import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.animation.core.animateFloatAsState
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.NavigateBefore
 import androidx.compose.material.icons.filled.NavigateNext
 import androidx.compose.material3.Icon
-import androidx.compose.material3.LinearProgressIndicator
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SnackbarHostState
-import androidx.compose.material3.SnackbarResult
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.CompositionLocal
-import androidx.compose.runtime.CompositionLocalMap
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -49,9 +37,8 @@ fun SelectScreen(
 ) {
     val scope = rememberCoroutineScope()
 
-    val targetImageUri = viewModel.targetImageUri.value
-    val selectMaterialUiState = viewModel.materialUiState.collectAsState().value
-    val gridSize = viewModel.gridSize.intValue
+    val targetUiState = viewModel.targetUiState.collectAsState().value
+    val materialUiState = viewModel.materialUiState.collectAsState().value
 
     val snackbarHostState: SnackbarHostState = LocalSnackbarHostState.current
 
@@ -64,17 +51,14 @@ fun SelectScreen(
         when (current) {
             SelectRoute.SelectTarget -> SelectTargetScreen(
                 modifier = Modifier.weight(1f),
-                uri = targetImageUri,
-                gridSize = gridSize,
-                cropRect = IntRect(0, 0, 0, 0),
+                uiState = targetUiState,
                 onSlide = {},
-                onMoveRect = {},
                 updateTargetImageUri = viewModel::updateTargetImageUri
             )
 
             SelectRoute.SelectMaterial -> SelectMaterialScreen(
                 modifier = Modifier.weight(1f),
-                uiState = selectMaterialUiState,
+                uiState = materialUiState,
                 addMaterials = viewModel::addMaterials,
                 removeMaterials = viewModel::removeMaterials
             )
@@ -96,7 +80,7 @@ fun SelectScreen(
                     SelectRoute.SelectTarget -> current = SelectRoute.SelectMaterial
                     SelectRoute.SelectMaterial -> {
                         when {
-                            targetImageUri == null -> {
+                            targetUiState.imageUri == null -> {
                                 scope.launch {
                                     snackbarHostState.showSnackbar(
                                         "Target Image is not selected.",
@@ -106,7 +90,7 @@ fun SelectScreen(
                                 }
                             }
 
-                            selectMaterialUiState.imageUriSet.isEmpty() -> {
+                            materialUiState.imageUriSet.isEmpty() -> {
                                 scope.launch {
                                     snackbarHostState.showSnackbar(
                                         "Material Image is not selected.",
@@ -118,7 +102,7 @@ fun SelectScreen(
 
                             else -> {
                                 onNext(
-                                    targetImageUri!!, selectMaterialUiState.imageUriSet, gridSize
+                                    targetUiState.imageUri!!, materialUiState.imageUriSet, targetUiState.gridSize
                                 )
                             }
                         }
