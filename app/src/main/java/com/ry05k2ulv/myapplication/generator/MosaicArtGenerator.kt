@@ -13,9 +13,12 @@ class MosaicArtGenerator(
     gridSize: Int = DEFAULT_GRID_SIZE,
 ) {
     companion object {
+        const val UNIT_SIZE = 16
+        const val MIN_UNIT_PER_GRID = 1
+        const val MAX_UNIT_PER_GRID = 16
         const val DEFAULT_GRID_SIZE = 32
-        const val MIN_GRID_SIZE = 16
-        const val MAX_GRID_SIZE = 256
+        const val MIN_GRID_SIZE = UNIT_SIZE * MIN_UNIT_PER_GRID
+        const val MAX_GRID_SIZE = UNIT_SIZE * MAX_UNIT_PER_GRID
     }
 
     private val gridSize: Int = when {

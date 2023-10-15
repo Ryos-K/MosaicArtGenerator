@@ -23,7 +23,6 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.IntRect
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.ry05k2ulv.myapplication.ui.LocalSnackbarHostState
@@ -52,7 +51,7 @@ fun SelectScreen(
             SelectRoute.SelectTarget -> SelectTargetScreen(
                 modifier = Modifier.weight(1f),
                 uiState = targetUiState,
-                onSlide = {},
+                onGridSizeChanged = viewModel::updateGridSize,
                 updateTargetImageUri = viewModel::updateTargetImageUri
             )
 
