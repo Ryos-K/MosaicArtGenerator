@@ -23,18 +23,21 @@ import javax.inject.Inject
 const val targetImageUriArg = "targetImageUri"
 const val materialImageUrisArg = "materialImageUris"
 const val gridSizeArg = "gridSize"
+const val outputSizeArg = "outputSize"
 
 class ResultArgs(
     val targetImageUri: Uri,
     val materialImageUris: List<Uri>,
-    val gridSize: Int
+    val gridSize: Int,
+    val outputSize: Int,
 ) {
     constructor(savedStateHandle: SavedStateHandle) :
             this(
                 Uri.parse(checkNotNull(savedStateHandle[targetImageUriArg])),
                 (checkNotNull(savedStateHandle[materialImageUrisArg]) as String).split(",")
                     .map { Uri.parse(it) },
-                checkNotNull(savedStateHandle[gridSizeArg])
+                checkNotNull(savedStateHandle[gridSizeArg]),
+                checkNotNull(savedStateHandle[outputSizeArg])
             )
 }
 
@@ -51,6 +54,8 @@ class ResultViewModel @Inject constructor(
 
     private val gridSize: Int
 
+    private val outputSize: Int
+
     var progress = mutableFloatStateOf(0f)
         private set
 
@@ -62,12 +67,14 @@ class ResultViewModel @Inject constructor(
         targetImageUri = args.targetImageUri
         materialImageUris = args.materialImageUris
         gridSize = args.gridSize
+        outputSize = args.outputSize
     }
 
     private val generator = MosaicArtGenerator(
         targetImage = magImageStore.getBitmapOrNull(targetImageUri)
             ?: throw FileNotFoundException(),
-        gridSize = gridSize
+        gridSize = gridSize,
+        outputSize = outputSize
     )
 
     init {
@@ -75,7 +82,6 @@ class ResultViewModel @Inject constructor(
     }
 
     private fun generateMosaicArt() {
-        Log.d("", "size = ${materialImageUris.size}")
         viewModelScope.launch(Dispatchers.Default) {
             materialImageUris.forEachIndexed { index, it ->
                 generator.applyMaterialImage(
@@ -103,7 +109,6 @@ class ResultViewModel @Inject constructor(
     }
 
     fun saveResultExternal(): Uri {
-
         val bitmap = result.value ?: throw IOException("Failed to save result.")
         return magImageStore.saveBitmapExternalAsPng(bitmap)
     }

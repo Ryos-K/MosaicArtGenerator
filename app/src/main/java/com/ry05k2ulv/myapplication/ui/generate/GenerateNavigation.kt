@@ -26,11 +26,12 @@ fun NavGraphBuilder.generateGraph(
         route = GENERATE_NAVIGATION_ROUTE
     ) {
         selectScreen(
-            onFinish = { targetImageUri: Uri, materialImageUriSet: Set<Uri>, gridSize: Int ->
+            onFinish = { targetImageUri: Uri, materialImageUriSet: Set<Uri>, gridSize: Int, outputSize: Int ->
                 navController.navigateToResult(
                     targetImageUri,
                     materialImageUriSet,
                     gridSize,
+                    outputSize,
                     navOptions
                 )
             }

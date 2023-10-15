@@ -31,8 +31,7 @@ import kotlinx.coroutines.launch
 @Composable
 fun SelectScreen(
     viewModel: SelectViewModel = hiltViewModel(),
-    onBack: () -> Unit,
-    onNext: (Uri, Set<Uri>, Int) -> Unit
+    onFinish: (Uri, Set<Uri>, Int, Int) -> Unit
 ) {
     val scope = rememberCoroutineScope()
 
@@ -101,8 +100,8 @@ fun SelectScreen(
                             }
 
                             else -> {
-                                onNext(
-                                    targetUiState.imageUri!!, materialUiState.imageUriSet, targetUiState.gridSize
+                                onFinish(
+                                    targetUiState.imageUri!!, materialUiState.imageUriSet, targetUiState.gridSize, targetUiState.outputSize
                                 )
                             }
                         }

@@ -13,14 +13,13 @@ fun NavController.navigateToSelect(navOptions: NavOptions? = null) {
 }
 
 fun NavGraphBuilder.selectScreen(
-    onFinish: (Uri, Set<Uri>, Int) -> Unit
+    onFinish: (Uri, Set<Uri>, Int, Int) -> Unit
 ) {
     composable(
         route = SELECT_NAVIGATION_ROUTE,
     ) {
         SelectScreen(
-            onBack = {},
-            onNext = onFinish
+            onFinish = onFinish
         )
     }
 }

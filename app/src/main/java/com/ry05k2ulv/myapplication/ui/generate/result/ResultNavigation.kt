@@ -16,17 +16,24 @@ fun NavController.navigateToResult(
     targetImageUri: Uri,
     materialImageUriSet: Set<Uri>,
     gridSize: Int,
+    outputSize: Int,
     navOptions: NavOptions? = null
 ) {
     val encodedTargetImageUri =
         URLEncoder.encode(targetImageUri.toString(), StandardCharsets.UTF_8.toString())
     val encodedMaterialImageUriArray =
-        materialImageUriSet.map { URLEncoder.encode(it.toString(), StandardCharsets.UTF_8.toString()) }
+        materialImageUriSet.map {
+            URLEncoder.encode(
+                it.toString(),
+                StandardCharsets.UTF_8.toString()
+            )
+        }
             .toTypedArray()
     navigate(
         "$RESULT_NAVIGATION_ROUTE/${encodedTargetImageUri}" +
                 "/${encodedMaterialImageUriArray.joinToString(",")}" +
-                "/${gridSize}",
+                "/${gridSize}" +
+                "/${outputSize}",
         navOptions
     )
 }
@@ -36,11 +43,13 @@ fun NavGraphBuilder.resultScreen() {
         route = "$RESULT_NAVIGATION_ROUTE" +
                 "/{$targetImageUriArg}" +
                 "/{$materialImageUrisArg}" +
-                "/{$gridSizeArg}",
+                "/{$gridSizeArg}" +
+                "/{$outputSizeArg}",
         arguments = listOf(
             navArgument(targetImageUriArg) { type = NavType.StringType },
             navArgument(materialImageUrisArg) { type = NavType.StringType },
-            navArgument(gridSizeArg) { type = NavType.IntType }
+            navArgument(gridSizeArg) { type = NavType.IntType },
+            navArgument(outputSizeArg) { type = NavType.IntType }
         )
     ) {
         ResultScreen()
