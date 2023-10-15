@@ -73,7 +73,7 @@ class ResultViewModel @Inject constructor(
 
     private fun updateProgress(index: Int) {
         _uiState.update {
-            it.copy(progress = ((index + 1) / materialImageUris.size).toFloat())
+            it.copy(progress = (index + 1f) / materialImageUris.size)
         }
     }
 
@@ -117,7 +117,7 @@ class ResultViewModel @Inject constructor(
 
     fun saveResult(filename: String) {
         if (_uiState.value.uriSaved != SaveState.YET) return
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             val bitmap = _uiState.value.result
             if (bitmap != null) {
                 updateUriSaved(SaveState.SAVING)
