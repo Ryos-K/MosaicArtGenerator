@@ -28,6 +28,7 @@ import androidx.navigation.NavOptions
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.ry05k2ulv.myapplication.navigation.MagNavHost
+import com.ry05k2ulv.myapplication.ui.home.ConfirmBackDialog
 import com.ry05k2ulv.myapplication.ui.home.HOME_NAVIGATION_ROUTE
 import com.ry05k2ulv.myapplication.ui.home.navigateToHome
 import com.ry05k2ulv.myapplication.ui.settings.SettingsDialog
@@ -52,9 +53,22 @@ fun MagApp() {
 
     var showSettingsDialog by remember { mutableStateOf(false) }
 
+    var showConfirmBackDialog by remember { mutableStateOf(false) }
+
     if (showSettingsDialog) {
         SettingsDialog(onDismiss = { showSettingsDialog = false })
     }
+
+    if (showConfirmBackDialog) {
+        ConfirmBackDialog(
+            onDismiss = { showConfirmBackDialog = false },
+            onAccept = {
+                showConfirmBackDialog = false
+                navController.navigateToHome(navOptions)
+            }
+        )
+    }
+
 
 
     Scaffold(
@@ -63,7 +77,9 @@ fun MagApp() {
                 title = current.uppercase(),
                 navigationIcon = Icons.Default.Home,
                 navigationIconDescription = "Home",
-                onNavigationIconClick = { navController.navigateToHome(navOptions) },
+                onNavigationIconClick = {
+                    if (current != HOME_NAVIGATION_ROUTE) showConfirmBackDialog = true
+                },
                 actionIcon = Icons.Default.Settings,
                 actionIconDescription = "Settings",
                 onAction = { showSettingsDialog = true }
