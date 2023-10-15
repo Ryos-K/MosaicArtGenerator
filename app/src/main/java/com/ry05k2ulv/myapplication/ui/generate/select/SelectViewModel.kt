@@ -19,7 +19,8 @@ class SelectViewModel @Inject constructor() : ViewModel() {
         uiState and method for SelectTargetScreen
        -------------------------------------------*/
     private val _targetUiState = MutableStateFlow(
-        TargetUiState(null, MosaicArtGenerator.DEFAULT_GRID_SIZE))
+        TargetUiState.default
+    )
     val targetUiState = _targetUiState.asStateFlow()
 
     fun updateTargetImageUri(uri: Uri?) {
@@ -34,11 +35,17 @@ class SelectViewModel @Inject constructor() : ViewModel() {
         }
     }
 
+    fun updateOutputSize(outputSize: Int) {
+        _targetUiState.update {
+            it.copy(outputSize = outputSize)
+        }
+    }
+
 
     /* ---------------------------------------------
         uiState and method for SelectMaterialScreen
        --------------------------------------------- */
-    private val _materialUiState = MutableStateFlow(MaterialUiState(setOf()))
+    private val _materialUiState = MutableStateFlow(MaterialUiState.default)
     val materialUiState = _materialUiState.asStateFlow()
 
     fun addMaterials(uris: List<Uri>) {
@@ -60,9 +67,24 @@ class SelectViewModel @Inject constructor() : ViewModel() {
 
 data class TargetUiState(
     val imageUri: Uri?,
-    val gridSize: Int
-)
+    val gridSize: Int,
+    val outputSize: Int
+) {
+    companion object {
+        val default
+            get() = TargetUiState(
+                null,
+                MosaicArtGenerator.DEFAULT_GRID_SIZE,
+                MosaicArtGenerator.DEFAULT_OUTPUT_SIZE
+            )
+    }
+}
 
 data class MaterialUiState(
     val imageUriSet: Set<Uri>
-)
+) {
+    companion object {
+        val default
+            get() = MaterialUiState(setOf())
+    }
+}

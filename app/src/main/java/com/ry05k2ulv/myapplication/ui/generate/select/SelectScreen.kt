@@ -52,7 +52,8 @@ fun SelectScreen(
                 modifier = Modifier.weight(1f),
                 uiState = targetUiState,
                 onGridSizeChanged = viewModel::updateGridSize,
-                updateTargetImageUri = viewModel::updateTargetImageUri
+                onOutputSizeChanged = viewModel::updateOutputSize,
+                updateTargetImageUri = viewModel::updateTargetImageUri,
             )
 
             SelectRoute.SelectMaterial -> SelectMaterialScreen(

@@ -36,6 +36,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
+import androidx.core.util.toRange
 import coil.compose.rememberAsyncImagePainter
 import com.ry05k2ulv.myapplication.generator.MosaicArtGenerator
 import kotlin.math.roundToInt
@@ -45,6 +46,7 @@ internal fun SelectTargetScreen(
     modifier: Modifier,
     uiState: TargetUiState,
     onGridSizeChanged: (Int) -> Unit,
+    onOutputSizeChanged: (Int) -> Unit,
     updateTargetImageUri: (Uri?) -> Unit
 ) {
     val targetImageLauncher = rememberLauncherForActivityResult(
@@ -55,6 +57,7 @@ internal fun SelectTargetScreen(
 
     val uri = uiState.imageUri
     val gridSize = uiState.gridSize
+    val outputSize = uiState.outputSize
 
     Column(modifier, horizontalAlignment = Alignment.CenterHorizontally) {
         OperationBar(
@@ -75,9 +78,14 @@ internal fun SelectTargetScreen(
             )
 
             AdvancedConfigurationCard(
-                modifier = Modifier.align(Alignment.BottomCenter).fillMaxWidth().padding(8.dp, 16.dp),
+                modifier = Modifier
+                    .align(Alignment.BottomCenter)
+                    .fillMaxWidth()
+                    .padding(8.dp, 16.dp),
                 gridSize = gridSize,
+                outputSize = outputSize,
                 onGridSizeChanged = onGridSizeChanged,
+                onOutputSizeChanged = onOutputSizeChanged
             )
         }
     }
@@ -118,7 +126,9 @@ private fun PictureButton(
 private fun AdvancedConfigurationCard(
     modifier: Modifier,
     gridSize: Int,
+    outputSize: Int,
     onGridSizeChanged: (Int) -> Unit,
+    onOutputSizeChanged: (Int) -> Unit
 ) {
     var expanded by remember { mutableStateOf(false) }
 
@@ -139,18 +149,47 @@ private fun AdvancedConfigurationCard(
         }
         if (expanded) {
             Divider(Modifier.padding(16.dp, 2.dp))
-            Text(
-                text = "Grid Size : $gridSize",
-                modifier = Modifier.padding(24.dp, 4.dp),
-                style = MaterialTheme.typography.titleSmall
+            SliderSection(
+                modifier = Modifier,
+                title = "Grid Size",
+                value = gridSize,
+                onValueChange = onGridSizeChanged,
+                valueRange = with(MosaicArtGenerator) { MIN_GRID_SIZE.toFloat()..MAX_GRID_SIZE.toFloat() },
+                steps = with(MosaicArtGenerator) { MAX_UNIT_PER_GRID - MIN_UNIT_PER_GRID - 1}
             )
-            Slider(
-                value = gridSize.toFloat() / MosaicArtGenerator.UNIT_SIZE,
-                onValueChange = { onGridSizeChanged(it.roundToInt() * MosaicArtGenerator.UNIT_SIZE) },
-                modifier = Modifier.padding(16.dp, 4.dp),
-                valueRange = with(MosaicArtGenerator) { MIN_UNIT_PER_GRID.toFloat()..MAX_UNIT_PER_GRID.toFloat() },
-                steps = with(MosaicArtGenerator) { MAX_UNIT_PER_GRID - MIN_UNIT_PER_GRID }
+            SliderSection(
+                modifier = Modifier,
+                title = "Output Size",
+                value = outputSize,
+                onValueChange = onOutputSizeChanged,
+                valueRange = with(MosaicArtGenerator) { MIN_OUTPUT_SIZE.toFloat()..MAX_OUTPUT_SIZE.toFloat()},
+                steps = with(MosaicArtGenerator) { (MAX_OUTPUT_SIZE - MIN_OUTPUT_SIZE) / MIN_OUTPUT_SIZE - 1}
             )
         }
+    }
+}
+
+@Composable
+private fun SliderSection(
+    modifier: Modifier,
+    title: String,
+    value: Int,
+    onValueChange: (Int) -> Unit,
+    valueRange: ClosedFloatingPointRange<Float>,
+    steps: Int
+) {
+    Column(modifier) {
+        Text(
+            text = "$title : $value",
+            modifier = Modifier.padding(24.dp, 4.dp),
+            style = MaterialTheme.typography.titleSmall
+        )
+        Slider(
+            value = value.toFloat(),
+            onValueChange = { onValueChange(it.roundToInt()) },
+            modifier = Modifier.padding(16.dp, 4.dp),
+            valueRange = valueRange,
+            steps = steps
+        )
     }
 }
