@@ -22,9 +22,12 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Check
+import androidx.compose.material.icons.filled.IncompleteCircle
 import androidx.compose.material.icons.filled.Save
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.material3.Button
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -65,16 +68,17 @@ fun ResultScreen(
     val result = uiState.result
     val progress = uiState.progress
     val running = uiState.running
+    val saved = uiState.uriSaved
 
-    val launcher = rememberLauncherForActivityResult(
-        ActivityResultContracts.RequestPermission()
-    ) { isGranted ->
-        if (isGranted) {
-            // Open camera
-        } else {
-            // Show dialog
-        }
-    }
+//    val launcher = rememberLauncherForActivityResult(
+//        ActivityResultContracts.RequestPermission()
+//    ) { isGranted ->
+//        if (isGranted) {
+//            // Open camera
+//        } else {
+//            // Show dialog
+//        }
+//    }
 
     Box(Modifier.fillMaxSize()) {
         if (result != null)
@@ -99,10 +103,14 @@ fun ResultScreen(
                 .fillMaxWidth()
                 .padding(bottom = 32.dp),
             onShareClick = {
-                if (ContextCompat.checkSelfPermission(context, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-                    launcher.launch(Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                    return@OperationBar
-                }
+//                if (ContextCompat.checkSelfPermission(
+//                        context,
+//                        Manifest.permission.WRITE_EXTERNAL_STORAGE
+//                    ) != PackageManager.PERMISSION_GRANTED
+//                ) {
+//                    launcher.launch(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+//                    return@OperationBar
+//                }
 
                 val uri = viewModel.saveResultExternal()
                 val sendIntent = Intent().apply {
@@ -113,7 +121,8 @@ fun ResultScreen(
                 }
                 context.startActivity(sendIntent)
             },
-            onSaveClick = {  },
+            onSaveClick = { viewModel.saveResult("mag") },
+            saved = saved,
             enabled = !running
         )
     }
@@ -191,11 +200,12 @@ private fun OperationBar(
     modifier: Modifier,
     onShareClick: () -> Unit,
     onSaveClick: () -> Unit,
-    enabled: Boolean
+    enabled: Boolean,
+    saved: SaveState
 ) {
     Row(modifier) {
         ShareButton(onShareClick = onShareClick, modifier = Modifier.weight(1f), enabled = enabled)
-        SaveButton(onSaveClick = onSaveClick, modifier = Modifier.weight(1f), enabled = enabled)
+        SaveButton(onSaveClick = onSaveClick, modifier = Modifier.weight(1f), saved = saved, enabled = enabled)
     }
 }
 
@@ -221,15 +231,34 @@ private fun ShareButton(
 private fun SaveButton(
     onSaveClick: () -> Unit,
     modifier: Modifier = Modifier,
+    saved: SaveState,
     enabled: Boolean = true
 ) {
-    IconButton(onClick = onSaveClick, modifier.height(64.dp), enabled) {
+    IconButton(onClick = onSaveClick, modifier.height(64.dp), enabled && saved == SaveState.YET) {
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
-            Icon(
-                imageVector = Icons.Default.Save,
-                contentDescription = "Save Image"
-            )
-            Text(text = "Save")
+            when (saved) {
+                SaveState.YET -> {
+                    Icon(
+                        imageVector = Icons.Default.Save,
+                        contentDescription = "Save Image"
+                    )
+                    Text(text = "Save")
+                }
+                SaveState.SAVING -> {
+                    Icon(
+                        imageVector = Icons.Default.IncompleteCircle,
+                        contentDescription = "Save Image"
+                    )
+                    Text(text = "Saving")
+                }
+                SaveState.SAVED -> {
+                    Icon(
+                        imageVector = Icons.Default.Check,
+                        contentDescription = "Saved"
+                    )
+                    Text(text = "Saved")
+                }
+            }
         }
     }
 }

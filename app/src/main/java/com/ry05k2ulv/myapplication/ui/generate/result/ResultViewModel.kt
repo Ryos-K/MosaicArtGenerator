@@ -2,9 +2,6 @@ package com.ry05k2ulv.myapplication.ui.generate.result
 
 import android.graphics.Bitmap
 import android.net.Uri
-import android.util.Log
-import androidx.compose.runtime.mutableFloatStateOf
-import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -86,6 +83,12 @@ class ResultViewModel @Inject constructor(
         }
     }
 
+    private fun updateUriSaved(saveState: SaveState) {
+        _uiState.update {
+            it.copy(uriSaved = saveState)
+        }
+    }
+
     private val generator = MosaicArtGenerator(
         targetImage = magImageStore.getBitmapOrNull(targetImageUri)
             ?: throw FileNotFoundException(),
@@ -113,17 +116,16 @@ class ResultViewModel @Inject constructor(
     }
 
     fun saveResult(filename: String) {
+        if (_uiState.value.uriSaved != SaveState.YET) return
         viewModelScope.launch {
             val bitmap = _uiState.value.result
             if (bitmap != null) {
+                updateUriSaved(SaveState.SAVING)
                 magImageStore.saveBitmapAsPng(
                     bitmap = bitmap,
                     filename = filename
-                ).also { uri ->
-                    _uiState.update {
-                        it.copy(savedUri = uri)
-                    }
-                }
+                )
+                updateUriSaved(SaveState.SAVED)
             }
         }
     }
@@ -134,15 +136,22 @@ class ResultViewModel @Inject constructor(
     }
 }
 
+enum class SaveState() {
+    YET,
+    SAVING,
+    SAVED
+}
+
 data class ResultUiState(
     val result: Bitmap?,
     val progress: Float,
     val running: Boolean,
-    val savedUri: Uri?,
-    val savedExternalUri: Uri?
+    val uriSaved: SaveState,
+    val savedExternalUri: SaveState
 ) {
     companion object {
         val default
-            get() = ResultUiState(null, 0f, true, null, null)
+            get() = ResultUiState(null, 0f, true, SaveState.YET, SaveState.YET)
     }
 }
+
