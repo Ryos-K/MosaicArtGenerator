@@ -136,6 +136,12 @@ class MagImageStore @Inject constructor(
         return FileProvider.getUriForFile(context, context.applicationContext.packageName + ".provider", file)
     }
 
+    fun deleteImages(uris: Collection<Uri>) {
+        uris.forEach {
+            contentResolver.delete(it, null, null)
+        }
+    }
+
     private fun String.suffixPng(): String =
         if (endsWith(".png", true)) this else "$this.png"
 
