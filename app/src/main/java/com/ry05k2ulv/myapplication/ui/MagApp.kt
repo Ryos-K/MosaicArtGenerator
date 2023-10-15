@@ -48,7 +48,7 @@ fun MagApp() {
     val snackbarHostState = remember { SnackbarHostState() }
 
 
-    val current = navController.currentBackStackEntryAsState().value?.destination?.route
+    val current = navController.currentBackStackEntryAsState().value?.destination?.route?.split("/")?.first()
         ?: HOME_NAVIGATION_ROUTE
 
     var showSettingsDialog by remember { mutableStateOf(false) }
