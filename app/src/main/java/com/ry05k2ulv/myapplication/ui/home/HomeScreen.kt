@@ -52,20 +52,37 @@ fun HomeScreen(
     var selectedImageUris by remember { mutableStateOf(setOf<Uri>()) }
     var selectMode by remember(selectedImageUris) { mutableStateOf(selectedImageUris.isNotEmpty()) }
 
+    var showConfirmDeleteDialog by remember { mutableStateOf(false) }
+
+    if (showConfirmDeleteDialog) {
+        ConfirmDeleteDialog(
+            onDismiss = { showConfirmDeleteDialog = false },
+            onAccept = {
+                showConfirmDeleteDialog = false
+                viewModel.deleteImages(selectedImageUris)
+                selectedImageUris = setOf()
+            },
+        )
+    }
+
     Box(Modifier.fillMaxSize()) {
         ImageGrid(
             imageUris = imageInfoList.map { it.uri },
             selectedImageUris = selectedImageUris,
             gridColumns = 2,
             onImageClick = { if (selectMode) selectedImageUris = selectedImageUris.toggle(it) },
-            onImageLongClick = { selectedImageUris = selectedImageUris.toggle(it) ; Log.d("toggled", "$selectedImageUris")}
+            onImageLongClick = {
+                selectedImageUris = selectedImageUris.toggle(it); Log.d(
+                "toggled",
+                "$selectedImageUris"
+            )
+            }
         )
 
         FloatingActionButton(
             onClick = if (selectMode) {
                 {
-                    viewModel.deleteImages(selectedImageUris)
-                    selectedImageUris = setOf()
+                    showConfirmDeleteDialog = true
                 }
             } else {
                 onFabClick
@@ -116,7 +133,7 @@ private fun ImageItem(
     onLongClick: () -> Unit
 ) {
     val contentPadding by animateDpAsState(
-        targetValue = if (selected) 4.dp else 2.dp, label = "padding"
+        targetValue = if (selected) 8.dp else 2.dp, label = "padding"
     )
     val selectColor = if (selected) MaterialTheme.colorScheme.primary else Color.Transparent
     Box(
