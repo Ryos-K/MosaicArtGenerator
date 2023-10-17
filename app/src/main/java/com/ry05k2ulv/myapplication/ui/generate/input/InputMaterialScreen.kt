@@ -1,4 +1,4 @@
-package com.ry05k2ulv.myapplication.ui.generate.select
+package com.ry05k2ulv.myapplication.ui.generate.input
 
 import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -56,7 +56,7 @@ const val MIN_GRID_COLUMNS = 2
 const val MAX_GRID_COLUMNS = 4
 
 @Composable
-fun SelectMaterialScreen(
+fun InputMaterialScreen(
     modifier: Modifier,
     uiState: MaterialUiState,
     addMaterials: (List<Uri>) -> Unit,

@@ -1,4 +1,4 @@
-package com.ry05k2ulv.myapplication.ui.generate.select
+package com.ry05k2ulv.myapplication.ui.generate.input
 
 import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -25,7 +25,6 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Slider
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -36,13 +35,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
-import androidx.core.util.toRange
 import coil.compose.rememberAsyncImagePainter
 import com.ry05k2ulv.myapplication.generator.MosaicArtGenerator
 import kotlin.math.roundToInt
 
 @Composable
-internal fun SelectTargetScreen(
+internal fun InputTargetScreen(
     modifier: Modifier,
     uiState: TargetUiState,
     onGridSizeChanged: (Int) -> Unit,

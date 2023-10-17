@@ -1,4 +1,4 @@
-package com.ry05k2ulv.myapplication.ui.generate.select
+package com.ry05k2ulv.myapplication.ui.generate.input
 
 import android.net.Uri
 import androidx.compose.foundation.layout.Arrangement
@@ -29,8 +29,8 @@ import com.ry05k2ulv.myapplication.ui.LocalSnackbarHostState
 import kotlinx.coroutines.launch
 
 @Composable
-fun SelectScreen(
-    viewModel: SelectViewModel = hiltViewModel(),
+fun InputScreen(
+    viewModel: InputViewModel = hiltViewModel(),
     onFinish: (Uri, Set<Uri>, Int, Int) -> Unit
 ) {
     val scope = rememberCoroutineScope()
@@ -40,14 +40,14 @@ fun SelectScreen(
 
     val snackbarHostState: SnackbarHostState = LocalSnackbarHostState.current
 
-    var current by remember { mutableStateOf(SelectRoute.SelectTarget) }
+    var current by remember { mutableStateOf(InputRoute.InputTarget) }
 
     Column(
         Modifier.fillMaxSize(),
         verticalArrangement = Arrangement.SpaceBetween
     ) {
         when (current) {
-            SelectRoute.SelectTarget -> SelectTargetScreen(
+            InputRoute.InputTarget -> InputTargetScreen(
                 modifier = Modifier.weight(1f),
                 uiState = targetUiState,
                 onGridSizeChanged = viewModel::updateGridSize,
@@ -55,7 +55,7 @@ fun SelectScreen(
                 updateTargetImageUri = viewModel::updateTargetImageUri,
             )
 
-            SelectRoute.SelectMaterial -> SelectMaterialScreen(
+            InputRoute.InputMaterial -> InputMaterialScreen(
                 modifier = Modifier.weight(1f),
                 uiState = materialUiState,
                 addMaterials = viewModel::addMaterials,
@@ -67,17 +67,17 @@ fun SelectScreen(
             modifier = Modifier
                 .height(56.dp)
                 .fillMaxWidth(),
-            showBackButton = current != SelectRoute.SelectTarget,
+            showBackButton = current != InputRoute.InputTarget,
             onBack = {
                 when (current) {
-                    SelectRoute.SelectTarget -> {}
-                    SelectRoute.SelectMaterial -> current = SelectRoute.SelectTarget
+                    InputRoute.InputTarget -> {}
+                    InputRoute.InputMaterial -> current = InputRoute.InputTarget
                 }
             },
             onNext = {
                 when (current) {
-                    SelectRoute.SelectTarget -> current = SelectRoute.SelectMaterial
-                    SelectRoute.SelectMaterial -> {
+                    InputRoute.InputTarget -> current = InputRoute.InputMaterial
+                    InputRoute.InputMaterial -> {
                         when {
                             targetUiState.imageUri == null -> {
                                 scope.launch {
@@ -110,8 +110,8 @@ fun SelectScreen(
                 }
             },
             nextButtonText = when (current) {
-                SelectRoute.SelectTarget -> "Next"
-                SelectRoute.SelectMaterial -> "Finish"
+                InputRoute.InputTarget -> "Next"
+                InputRoute.InputMaterial -> "Finish"
             }
         )
     }
@@ -175,7 +175,7 @@ private fun NextButton(
     }
 }
 
-enum class SelectRoute {
-    SelectTarget,
-    SelectMaterial,
+enum class InputRoute {
+    InputTarget,
+    InputMaterial,
 }
