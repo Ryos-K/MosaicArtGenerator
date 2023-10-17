@@ -1,4 +1,4 @@
-package com.ry05k2ulv.myapplication.ui.generate.result
+package com.ry05k2ulv.myapplication.ui.generate.output
 
 import android.net.Uri
 import androidx.navigation.NavController
@@ -10,9 +10,9 @@ import androidx.navigation.navArgument
 import java.net.URLEncoder
 import java.nio.charset.StandardCharsets
 
-internal const val RESULT_NAVIGATION_ROUTE = "result"
+internal const val OUTPUT_NAVIGATION_ROUTE = "output"
 
-fun NavController.navigateToResult(
+fun NavController.navigateToOutput(
     targetImageUri: Uri,
     materialImageUriSet: Set<Uri>,
     gridSize: Int,
@@ -30,7 +30,7 @@ fun NavController.navigateToResult(
         }
             .toTypedArray()
     navigate(
-        "$RESULT_NAVIGATION_ROUTE/${encodedTargetImageUri}" +
+        "$OUTPUT_NAVIGATION_ROUTE/${encodedTargetImageUri}" +
                 "/${encodedMaterialImageUriArray.joinToString(",")}" +
                 "/${gridSize}" +
                 "/${outputSize}",
@@ -38,9 +38,9 @@ fun NavController.navigateToResult(
     )
 }
 
-fun NavGraphBuilder.resultScreen() {
+fun NavGraphBuilder.outputScreen() {
     composable(
-        route = "$RESULT_NAVIGATION_ROUTE" +
+        route = "$OUTPUT_NAVIGATION_ROUTE" +
                 "/{$targetImageUriArg}" +
                 "/{$materialImageUrisArg}" +
                 "/{$gridSizeArg}" +
@@ -52,6 +52,6 @@ fun NavGraphBuilder.resultScreen() {
             navArgument(outputSizeArg) { type = NavType.IntType }
         )
     ) {
-        ResultScreen()
+        OutputScreen()
     }
 }

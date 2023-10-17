@@ -1,19 +1,14 @@
 package com.ry05k2ulv.myapplication.ui.generate
 
 import android.net.Uri
-import androidx.compose.runtime.remember
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavOptions
-import androidx.navigation.compose.composable
 import androidx.navigation.navigation
-import com.ry05k2ulv.myapplication.ui.generate.result.ResultScreen
-import com.ry05k2ulv.myapplication.ui.generate.result.navigateToResult
-import com.ry05k2ulv.myapplication.ui.generate.result.resultScreen
-import com.ry05k2ulv.myapplication.ui.generate.select.SELECT_NAVIGATION_ROUTE
-import com.ry05k2ulv.myapplication.ui.generate.select.SelectScreen
-import com.ry05k2ulv.myapplication.ui.generate.select.selectScreen
+import com.ry05k2ulv.myapplication.ui.generate.output.navigateToOutput
+import com.ry05k2ulv.myapplication.ui.generate.output.outputScreen
+import com.ry05k2ulv.myapplication.ui.generate.input.INPUT_NAVIGATION_ROUTE
+import com.ry05k2ulv.myapplication.ui.generate.input.inputScreen
 
 const val GENERATE_NAVIGATION_ROUTE = "generate"
 
@@ -22,12 +17,12 @@ fun NavGraphBuilder.generateGraph(
     navOptions: NavOptions? = null
 ) {
     navigation(
-        startDestination = SELECT_NAVIGATION_ROUTE,
+        startDestination = INPUT_NAVIGATION_ROUTE,
         route = GENERATE_NAVIGATION_ROUTE
     ) {
-        selectScreen(
+        inputScreen(
             onFinish = { targetImageUri: Uri, materialImageUriSet: Set<Uri>, gridSize: Int, outputSize: Int ->
-                navController.navigateToResult(
+                navController.navigateToOutput(
                     targetImageUri,
                     materialImageUriSet,
                     gridSize,
@@ -36,6 +31,6 @@ fun NavGraphBuilder.generateGraph(
                 )
             }
         )
-        resultScreen()
+        outputScreen()
     }
 }

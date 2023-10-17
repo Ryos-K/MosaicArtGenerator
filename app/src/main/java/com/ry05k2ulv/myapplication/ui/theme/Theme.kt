@@ -9,7 +9,9 @@ import androidx.compose.material3.dynamicDarkColorScheme
 import androidx.compose.material3.dynamicLightColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.SideEffect
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
@@ -37,6 +39,16 @@ private val LightColorScheme = lightColorScheme(
     */
 )
 
+private val CustomDarkColorScheme = CustomColorScheme(
+    resultBackground = Black,
+    resultContent = White
+)
+
+private val CustomLightColorScheme = CustomColorScheme(
+    resultBackground = BlueGray900,
+    resultContent = White
+)
+
 @Composable
 fun MosaicArtGeneratorTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
@@ -53,6 +65,9 @@ fun MosaicArtGeneratorTheme(
         darkTheme -> DarkColorScheme
         else -> LightColorScheme
     }
+
+    val customColorScheme = if (darkTheme) CustomDarkColorScheme else CustomLightColorScheme
+
     val view = LocalView.current
     if (!view.isInEditMode) {
         SideEffect {
@@ -62,11 +77,16 @@ fun MosaicArtGeneratorTheme(
         }
     }
 
-    MaterialTheme(
-        colorScheme = colorScheme,
-        typography = Typography,
-        content = content
-    )
+
+    CompositionLocalProvider(
+        LocalCustomColorScheme provides customColorScheme
+    ) {
+        MaterialTheme(
+            colorScheme = colorScheme,
+            typography = Typography,
+            content = content
+        )
+    }
 }
 
 fun supportDynamicColor() = Build.VERSION.SDK_INT >= Build.VERSION_CODES.S

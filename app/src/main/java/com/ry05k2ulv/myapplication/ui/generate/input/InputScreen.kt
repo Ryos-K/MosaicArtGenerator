@@ -1,6 +1,7 @@
-package com.ry05k2ulv.myapplication.ui.generate.select
+package com.ry05k2ulv.myapplication.ui.generate.input
 
 import android.net.Uri
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -11,6 +12,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.NavigateBefore
 import androidx.compose.material.icons.filled.NavigateNext
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -23,14 +25,15 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.ry05k2ulv.myapplication.ui.LocalSnackbarHostState
 import kotlinx.coroutines.launch
 
 @Composable
-fun SelectScreen(
-    viewModel: SelectViewModel = hiltViewModel(),
+fun InputScreen(
+    viewModel: InputViewModel = hiltViewModel(),
     onFinish: (Uri, Set<Uri>, Int, Int) -> Unit
 ) {
     val scope = rememberCoroutineScope()
@@ -40,14 +43,14 @@ fun SelectScreen(
 
     val snackbarHostState: SnackbarHostState = LocalSnackbarHostState.current
 
-    var current by remember { mutableStateOf(SelectRoute.SelectTarget) }
+    var current by remember { mutableStateOf(InputRoute.InputTarget) }
 
     Column(
         Modifier.fillMaxSize(),
         verticalArrangement = Arrangement.SpaceBetween
     ) {
         when (current) {
-            SelectRoute.SelectTarget -> SelectTargetScreen(
+            InputRoute.InputTarget -> InputTargetScreen(
                 modifier = Modifier.weight(1f),
                 uiState = targetUiState,
                 onGridSizeChanged = viewModel::updateGridSize,
@@ -55,7 +58,7 @@ fun SelectScreen(
                 updateTargetImageUri = viewModel::updateTargetImageUri,
             )
 
-            SelectRoute.SelectMaterial -> SelectMaterialScreen(
+            InputRoute.InputMaterial -> InputMaterialScreen(
                 modifier = Modifier.weight(1f),
                 uiState = materialUiState,
                 addMaterials = viewModel::addMaterials,
@@ -67,17 +70,18 @@ fun SelectScreen(
             modifier = Modifier
                 .height(56.dp)
                 .fillMaxWidth(),
-            showBackButton = current != SelectRoute.SelectTarget,
+            title = current.title,
+            showBackButton = current != InputRoute.InputTarget,
             onBack = {
                 when (current) {
-                    SelectRoute.SelectTarget -> {}
-                    SelectRoute.SelectMaterial -> current = SelectRoute.SelectTarget
+                    InputRoute.InputTarget -> {}
+                    InputRoute.InputMaterial -> current = InputRoute.InputTarget
                 }
             },
             onNext = {
                 when (current) {
-                    SelectRoute.SelectTarget -> current = SelectRoute.SelectMaterial
-                    SelectRoute.SelectMaterial -> {
+                    InputRoute.InputTarget -> current = InputRoute.InputMaterial
+                    InputRoute.InputMaterial -> {
                         when {
                             targetUiState.imageUri == null -> {
                                 scope.launch {
@@ -101,7 +105,10 @@ fun SelectScreen(
 
                             else -> {
                                 onFinish(
-                                    targetUiState.imageUri!!, materialUiState.imageUriSet, targetUiState.gridSize, targetUiState.outputSize
+                                    targetUiState.imageUri!!,
+                                    materialUiState.imageUriSet,
+                                    targetUiState.gridSize,
+                                    targetUiState.outputSize
                                 )
                             }
                         }
@@ -110,8 +117,8 @@ fun SelectScreen(
                 }
             },
             nextButtonText = when (current) {
-                SelectRoute.SelectTarget -> "Next"
-                SelectRoute.SelectMaterial -> "Finish"
+                InputRoute.InputTarget -> "Next"
+                InputRoute.InputMaterial -> "Finish"
             }
         )
     }
@@ -120,26 +127,36 @@ fun SelectScreen(
 @Composable
 private fun BottomBar(
     modifier: Modifier,
+    title: String,
     showBackButton: Boolean,
     onBack: () -> Unit,
     onNext: () -> Unit,
     backButtonText: String = "Back",
     nextButtonText: String = "Next"
 ) {
+    val background = MaterialTheme.colorScheme.secondaryContainer
+    val textColor = MaterialTheme.colorScheme.onSecondaryContainer
     Box(
-        modifier = modifier,
+        modifier = modifier.background(background),
     ) {
+        Text(
+            text = title,
+            modifier = Modifier.align(Alignment.Center),
+            color = textColor.copy(alpha = 0.7f)
+        )
         if (showBackButton) {
             BackButton(
                 text = backButtonText,
                 onClick = onBack,
-                modifier = Modifier.align(Alignment.CenterStart)
+                modifier = Modifier.align(Alignment.CenterStart),
+                color = textColor
             )
         }
         NextButton(
             text = nextButtonText,
             onClick = onNext,
-            modifier = Modifier.align(Alignment.CenterEnd)
+            modifier = Modifier.align(Alignment.CenterEnd),
+            color = textColor
         )
     }
 
@@ -149,14 +166,15 @@ private fun BottomBar(
 private fun BackButton(
     text: String,
     onClick: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    color: Color
 ) {
     TextButton(
         onClick = onClick,
         modifier = modifier,
     ) {
-        Icon(imageVector = Icons.Default.NavigateBefore, contentDescription = "Back")
-        Text(text = text)
+        Icon(imageVector = Icons.Default.NavigateBefore, contentDescription = "Back", tint = color)
+        Text(text = text, color = color)
     }
 }
 
@@ -164,18 +182,19 @@ private fun BackButton(
 private fun NextButton(
     text: String,
     onClick: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    color: Color
 ) {
     TextButton(
         onClick = onClick,
         modifier = modifier
     ) {
-        Text(text = text)
-        Icon(imageVector = Icons.Default.NavigateNext, contentDescription = "Next")
+        Text(text = text, color = color)
+        Icon(imageVector = Icons.Default.NavigateNext, contentDescription = "Next", tint = color)
     }
 }
 
-enum class SelectRoute {
-    SelectTarget,
-    SelectMaterial,
+enum class InputRoute(val title: String) {
+    InputTarget("Input Target Image"),
+    InputMaterial("Input Material Images"),
 }
