@@ -1,4 +1,4 @@
-package com.ry05k2ulv.myapplication.ui.generate.select
+package com.ry05k2ulv.myapplication.ui.generate.input
 
 import android.net.Uri
 import androidx.lifecycle.ViewModel
@@ -10,13 +10,13 @@ import kotlinx.coroutines.flow.update
 import javax.inject.Inject
 
 @HiltViewModel
-class SelectViewModel @Inject constructor() : ViewModel() {
+class InputViewModel @Inject constructor() : ViewModel() {
     /* -------------------------
-        method for SelectScreen
+        method for InputScreen
        ------------------------- */
 
     /* -------------------------------------------
-        uiState and method for SelectTargetScreen
+        uiState and method for InputTargetScreen
        -------------------------------------------*/
     private val _targetUiState = MutableStateFlow(
         TargetUiState.default
@@ -43,7 +43,7 @@ class SelectViewModel @Inject constructor() : ViewModel() {
 
 
     /* ---------------------------------------------
-        uiState and method for SelectMaterialScreen
+        uiState and method for InputMaterialScreen
        --------------------------------------------- */
     private val _materialUiState = MutableStateFlow(MaterialUiState.default)
     val materialUiState = _materialUiState.asStateFlow()

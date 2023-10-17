@@ -1,4 +1,4 @@
-package com.ry05k2ulv.myapplication.ui.generate.select
+package com.ry05k2ulv.myapplication.ui.generate.input
 
 import android.net.Uri
 import androidx.navigation.NavController
@@ -6,19 +6,19 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavOptions
 import androidx.navigation.compose.composable
 
-internal const val SELECT_NAVIGATION_ROUTE = "select"
+internal const val INPUT_NAVIGATION_ROUTE = "input"
 
 fun NavController.navigateToSelect(navOptions: NavOptions? = null) {
-    navigate(SELECT_NAVIGATION_ROUTE, navOptions)
+    navigate(INPUT_NAVIGATION_ROUTE, navOptions)
 }
 
-fun NavGraphBuilder.selectScreen(
+fun NavGraphBuilder.inputScreen(
     onFinish: (Uri, Set<Uri>, Int, Int) -> Unit
 ) {
     composable(
-        route = SELECT_NAVIGATION_ROUTE,
+        route = INPUT_NAVIGATION_ROUTE,
     ) {
-        SelectScreen(
+        InputScreen(
             onFinish = onFinish
         )
     }
