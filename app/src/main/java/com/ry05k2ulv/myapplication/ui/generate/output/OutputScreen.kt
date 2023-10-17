@@ -23,6 +23,7 @@ import androidx.compose.material.icons.filled.Share
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -38,6 +39,7 @@ import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.ry05k2ulv.myapplication.ui.theme.LocalCustomColorScheme
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -63,7 +65,11 @@ fun OutputScreen(
 //        }
 //    }
 
-    Box(Modifier.fillMaxSize()) {
+    Box(
+        Modifier
+            .fillMaxSize()
+            .background(LocalCustomColorScheme.current.resultBackground)
+    ) {
         if (result != null)
             Image(
                 bitmap = result.asImageBitmap(),
@@ -144,11 +150,13 @@ private fun ProgressText(
         Text(
             "Progress :",
             Modifier.padding(4.dp),
+            color = LocalCustomColorScheme.current.resultContent,
             style = MaterialTheme.typography.titleMedium
         )
         Text(
             "${(progress * 100).toInt()} (%)",
             Modifier.padding(4.dp),
+            color = LocalCustomColorScheme.current.resultContent,
             style = MaterialTheme.typography.titleMedium
         )
     }
@@ -188,7 +196,12 @@ private fun OperationBar(
 ) {
     Row(modifier) {
         ShareButton(onShareClick = onShareClick, modifier = Modifier.weight(1f), enabled = enabled)
-        SaveButton(onSaveClick = onSaveClick, modifier = Modifier.weight(1f), saved = saved, enabled = enabled)
+        SaveButton(
+            onSaveClick = onSaveClick,
+            modifier = Modifier.weight(1f),
+            saved = saved,
+            enabled = enabled
+        )
     }
 }
 
@@ -199,11 +212,18 @@ private fun ShareButton(
     enabled: Boolean = true
 ) {
 
-    IconButton(onClick = onShareClick, modifier.height(64.dp), enabled) {
+    IconButton(
+        onClick = onShareClick,
+        modifier = modifier.height(64.dp),
+        enabled = enabled,
+        colors = IconButtonDefaults.iconButtonColors(
+            contentColor = LocalCustomColorScheme.current.resultContent
+        )
+    ) {
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
             Icon(
                 imageVector = Icons.Default.Share,
-                contentDescription = "Share Image"
+                contentDescription = "Share Image",
             )
             Text("Share")
         }
@@ -217,7 +237,14 @@ private fun SaveButton(
     saved: SaveState,
     enabled: Boolean = true
 ) {
-    IconButton(onClick = onSaveClick, modifier.height(64.dp), enabled && saved == SaveState.YET) {
+    IconButton(
+        onClick = onSaveClick,
+        modifier = modifier.height(64.dp),
+        colors = IconButtonDefaults.iconButtonColors(
+            contentColor = LocalCustomColorScheme.current.resultContent
+        ),
+        enabled = enabled && saved == SaveState.YET
+    ) {
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
             when (saved) {
                 SaveState.YET -> {
@@ -227,6 +254,7 @@ private fun SaveButton(
                     )
                     Text(text = "Save")
                 }
+
                 SaveState.SAVING -> {
                     Icon(
                         imageVector = Icons.Default.IncompleteCircle,
@@ -234,6 +262,7 @@ private fun SaveButton(
                     )
                     Text(text = "Saving")
                 }
+
                 SaveState.SAVED -> {
                     Icon(
                         imageVector = Icons.Default.Check,
