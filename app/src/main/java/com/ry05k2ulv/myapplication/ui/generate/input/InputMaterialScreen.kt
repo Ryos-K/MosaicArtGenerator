@@ -125,7 +125,7 @@ fun ImageGrid(
     ) {
     val lazyGridState = rememberLazyGridState()
     val showOperationBar by remember(lazyGridState) {
-        derivedStateOf { lazyGridState.firstVisibleItemScrollOffset < 3 }
+        derivedStateOf { lazyGridState.firstVisibleItemScrollOffset == 0 }
     }
     val space by animateDpAsState(targetValue =  if (showOperationBar) 48.dp else 0.dp,  label = "space")
     Column(
@@ -207,7 +207,7 @@ private fun OperationBar(
         modifier
             .animateContentSize(animationSpec = spring(dampingRatio = 2f))
             .fillMaxWidth()
-            .background(MaterialTheme.colorScheme.background.copy(alpha = 0.65f))
+            .background(MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.75f))
             .height(48.dp)
     ) {
         PictureButton(onClick = onPictureClick, itemModifier)

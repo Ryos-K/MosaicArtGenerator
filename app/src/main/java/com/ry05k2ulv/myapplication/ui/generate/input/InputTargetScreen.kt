@@ -58,16 +58,16 @@ internal fun InputTargetScreen(
     val outputSize = uiState.outputSize
 
     Column(modifier, horizontalAlignment = Alignment.CenterHorizontally) {
-        OperationBar(
-            onPictureClick = { targetImageLauncher.launch("image/*") }
-        )
         Box(
             Modifier
                 .weight(1f)
-                .fillMaxWidth()
-                .background(Color.Gray),
+                .fillMaxWidth(),
             contentAlignment = Alignment.Center
         ) {
+            OperationBar(
+                modifier = Modifier.align(Alignment.TopCenter),
+                onPictureClick = { targetImageLauncher.launch("image/*") }
+            )
             Image(
                 painter = rememberAsyncImagePainter(uri),
                 contentDescription = "Image",
@@ -100,7 +100,7 @@ private fun OperationBar(
     Row(
         modifier
             .fillMaxWidth()
-            .background(MaterialTheme.colorScheme.background.copy(alpha = 0.65f))
+            .background(MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.75f))
             .height(48.dp)
     ) {
         PictureButton(onClick = onPictureClick, itemModifier)
