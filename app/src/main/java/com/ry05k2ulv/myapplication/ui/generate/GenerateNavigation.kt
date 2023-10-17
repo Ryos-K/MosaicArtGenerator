@@ -5,8 +5,8 @@ import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavOptions
 import androidx.navigation.navigation
-import com.ry05k2ulv.myapplication.ui.generate.result.navigateToResult
-import com.ry05k2ulv.myapplication.ui.generate.result.resultScreen
+import com.ry05k2ulv.myapplication.ui.generate.output.navigateToOutput
+import com.ry05k2ulv.myapplication.ui.generate.output.outputScreen
 import com.ry05k2ulv.myapplication.ui.generate.input.INPUT_NAVIGATION_ROUTE
 import com.ry05k2ulv.myapplication.ui.generate.input.inputScreen
 
@@ -22,7 +22,7 @@ fun NavGraphBuilder.generateGraph(
     ) {
         inputScreen(
             onFinish = { targetImageUri: Uri, materialImageUriSet: Set<Uri>, gridSize: Int, outputSize: Int ->
-                navController.navigateToResult(
+                navController.navigateToOutput(
                     targetImageUri,
                     materialImageUriSet,
                     gridSize,
@@ -31,6 +31,6 @@ fun NavGraphBuilder.generateGraph(
                 )
             }
         )
-        resultScreen()
+        outputScreen()
     }
 }

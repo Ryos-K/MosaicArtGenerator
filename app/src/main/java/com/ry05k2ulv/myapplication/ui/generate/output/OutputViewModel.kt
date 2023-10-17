@@ -1,4 +1,4 @@
-package com.ry05k2ulv.myapplication.ui.generate.result
+package com.ry05k2ulv.myapplication.ui.generate.output
 
 import android.graphics.Bitmap
 import android.net.Uri
@@ -23,7 +23,7 @@ const val materialImageUrisArg = "materialImageUris"
 const val gridSizeArg = "gridSize"
 const val outputSizeArg = "outputSize"
 
-class ResultArgs(
+class OutputArgs(
     val targetImageUri: Uri,
     val materialImageUris: List<Uri>,
     val gridSize: Int,
@@ -55,14 +55,14 @@ class ResultViewModel @Inject constructor(
     private val outputSize: Int
 
     init {
-        val args = ResultArgs(savedStateHandle)
+        val args = OutputArgs(savedStateHandle)
         targetImageUri = args.targetImageUri
         materialImageUris = args.materialImageUris
         gridSize = args.gridSize
         outputSize = args.outputSize
     }
 
-    private val _uiState = MutableStateFlow(ResultUiState.default)
+    private val _uiState = MutableStateFlow(OutputUiState.default)
     val uiState = _uiState.asStateFlow()
 
     private fun updateResult(bitmap: Bitmap) {
@@ -142,7 +142,7 @@ enum class SaveState() {
     SAVED
 }
 
-data class ResultUiState(
+data class OutputUiState(
     val result: Bitmap?,
     val progress: Float,
     val running: Boolean,
@@ -151,7 +151,7 @@ data class ResultUiState(
 ) {
     companion object {
         val default
-            get() = ResultUiState(null, 0f, true, SaveState.YET, SaveState.YET)
+            get() = OutputUiState(null, 0f, true, SaveState.YET, SaveState.YET)
     }
 }
 
