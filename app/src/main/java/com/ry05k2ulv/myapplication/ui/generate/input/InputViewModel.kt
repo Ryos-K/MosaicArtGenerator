@@ -3,6 +3,7 @@ package com.ry05k2ulv.myapplication.ui.generate.input
 import android.net.Uri
 import androidx.lifecycle.ViewModel
 import com.ry05k2ulv.myapplication.generator.GeneratorConfig
+import com.ry05k2ulv.myapplication.generator.GeneratorPriority
 import com.ry05k2ulv.myapplication.generator.MosaicArtGenerator
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -41,6 +42,12 @@ class InputViewModel @Inject constructor() : ViewModel() {
     fun updateOutputSize(outputSize: Int) {
         _targetUiState.update {
             it.copy(generatorConfig = it.generatorConfig.copy(outputSize = outputSize))
+        }
+    }
+
+    fun updatePriority(priority: GeneratorPriority) {
+        _targetUiState.update {
+            it.copy(generatorConfig = it.generatorConfig.copy(priority = priority))
         }
     }
 

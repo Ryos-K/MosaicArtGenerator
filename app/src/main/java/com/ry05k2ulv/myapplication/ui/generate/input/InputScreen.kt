@@ -54,8 +54,9 @@ fun InputScreen(
             InputRoute.InputTarget -> InputTargetScreen(
                 modifier = Modifier.weight(1f),
                 uiState = targetUiState,
-                onGridSizeChanged = viewModel::updateGridSize,
-                onOutputSizeChanged = viewModel::updateOutputSize,
+                onGridSizeChange = viewModel::updateGridSize,
+                onOutputSizeChange = viewModel::updateOutputSize,
+                onPriorityChange = viewModel::updatePriority,
                 updateTargetImageUri = viewModel::updateTargetImageUri,
             )
 

@@ -6,7 +6,8 @@ data class GeneratorConfig(
     @IntRange(from = MIN_GRID_SIZE.toLong(), to = MAX_GRID_SIZE.toLong())
     val gridSize: Int = DEFAULT_GRID_SIZE,
     @IntRange(from = MIN_OUTPUT_SIZE.toLong(), to = MAX_OUTPUT_SIZE.toLong())
-    val outputSize: Int = DEFAULT_OUTPUT_SIZE
+    val outputSize: Int = DEFAULT_OUTPUT_SIZE,
+    val priority: GeneratorPriority = GeneratorPriority.MEDIUM
 ) {
     companion object {
         // Constant about grid size
@@ -31,4 +32,10 @@ data class GeneratorConfig(
             "'outputSize' must be between $MIN_OUTPUT_SIZE and $MAX_OUTPUT_SIZE"
         }
     }
+}
+
+enum class GeneratorPriority {
+    QUALITY,
+    MEDIUM,
+    SPEED
 }
