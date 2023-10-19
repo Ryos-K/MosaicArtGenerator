@@ -36,6 +36,7 @@ import androidx.compose.material.icons.filled.GridView
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
@@ -95,6 +96,7 @@ fun InputMaterialScreen(
         OperationBar(
             modifier = Modifier.align(Alignment.TopCenter),
             selectMode = selectMode,
+            imageCount = imageUris.size,
             onPictureClick = { materialImageLauncher.launch("image/*") },
             onSelectionToggle = {
                 selectedImageUris = if (selectMode) setOf() else imageUris.toSet()
@@ -196,6 +198,7 @@ private fun ImageItem(
 private fun OperationBar(
     modifier: Modifier = Modifier,
     selectMode: Boolean,
+    imageCount: Int,
     onPictureClick: () -> Unit,
     onSelectionToggle: () -> Unit,
     onRemoveClick: () -> Unit,
@@ -208,12 +211,14 @@ private fun OperationBar(
             .animateContentSize(animationSpec = spring(dampingRatio = 2f))
             .fillMaxWidth()
             .background(MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.75f))
-            .height(48.dp)
+            .height(48.dp),
+        verticalAlignment = Alignment.CenterVertically
     ) {
         PictureButton(onClick = onPictureClick, itemModifier)
         SelectionToggleButton(onClick = onSelectionToggle, selectMode = selectMode, itemModifier)
         RemoveButton(onClick = onRemoveClick, selectMode = selectMode, itemModifier)
         Spacer(modifier = Modifier.weight(1f))
+        Text(text = "$imageCount / $materialImageLimit")
         GridSwitchButton(onClick = onGridSwitch, itemModifier)
         
     }

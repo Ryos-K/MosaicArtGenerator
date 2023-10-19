@@ -9,6 +9,8 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import javax.inject.Inject
 
+const val materialImageLimit = 256
+
 @HiltViewModel
 class InputViewModel @Inject constructor() : ViewModel() {
     /* -------------------------
@@ -51,7 +53,7 @@ class InputViewModel @Inject constructor() : ViewModel() {
     fun addMaterials(uris: List<Uri>) {
         _materialUiState.update {
             it.copy(
-                imageUriSet = it.imageUriSet + uris
+                imageUriSet = it.imageUriSet + uris.take(materialImageLimit - it.imageUriSet.size)
             )
         }
     }
