@@ -39,6 +39,7 @@ import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.ry05k2ulv.myapplication.ui.components.ZoomableImage
 import com.ry05k2ulv.myapplication.ui.theme.LocalCustomColorScheme
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -70,7 +71,7 @@ fun OutputScreen(
             .background(LocalCustomColorScheme.current.resultBackground)
     ) {
         if (result != null)
-            Image(
+            ZoomableImage(
                 bitmap = result.asImageBitmap(),
                 contentDescription = null,
                 modifier = Modifier.align(
