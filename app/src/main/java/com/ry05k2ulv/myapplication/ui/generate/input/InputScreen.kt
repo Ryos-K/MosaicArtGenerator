@@ -28,13 +28,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.ry05k2ulv.myapplication.generator.GeneratorConfig
 import com.ry05k2ulv.myapplication.ui.LocalSnackbarHostState
 import kotlinx.coroutines.launch
 
 @Composable
 fun InputScreen(
     viewModel: InputViewModel = hiltViewModel(),
-    onFinish: (Uri, Set<Uri>, Int, Int) -> Unit
+    onFinish: (Uri, Set<Uri>, GeneratorConfig) -> Unit
 ) {
     val scope = rememberCoroutineScope()
 
@@ -107,8 +108,7 @@ fun InputScreen(
                                 onFinish(
                                     targetUiState.imageUri!!,
                                     materialUiState.imageUriSet,
-                                    targetUiState.gridSize,
-                                    targetUiState.outputSize
+                                    targetUiState.generatorConfig
                                 )
                             }
                         }

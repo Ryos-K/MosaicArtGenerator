@@ -10,35 +10,10 @@ import kotlin.math.sqrt
 
 class MosaicArtGenerator(
     targetImage: Bitmap,
-    gridSize: Int = DEFAULT_GRID_SIZE,
-    outputSize: Int = DEFAULT_OUTPUT_SIZE
+    generatorConfig: GeneratorConfig
 ) {
-    companion object {
-        // Constant about grid size
-        const val UNIT_SIZE = 16
-        const val MIN_UNIT_PER_GRID = 1
-        const val MAX_UNIT_PER_GRID = 16
-        const val DEFAULT_GRID_SIZE = 32
-        const val MIN_GRID_SIZE = UNIT_SIZE * MIN_UNIT_PER_GRID
-        const val MAX_GRID_SIZE = UNIT_SIZE * MAX_UNIT_PER_GRID
-
-        // Constant about output size
-        const val MAX_OUTPUT_SIZE = 4096
-        const val MIN_OUTPUT_SIZE = 1024
-        const val DEFAULT_OUTPUT_SIZE = 2048
-    }
-
-    private val gridSize: Int = when {
-        gridSize < MIN_GRID_SIZE -> MIN_GRID_SIZE
-        gridSize > MAX_GRID_SIZE -> MAX_GRID_SIZE
-        else -> gridSize
-    }
-
-    private val outputSize:Int = when {
-        outputSize < MIN_OUTPUT_SIZE -> MIN_OUTPUT_SIZE
-        outputSize > MAX_OUTPUT_SIZE -> MAX_OUTPUT_SIZE
-        else -> outputSize
-    }
+    private val gridSize = generatorConfig.gridSize
+    private val outputSize = generatorConfig.outputSize
 
     private val colCount: Int
     private val rowCount: Int

@@ -2,6 +2,7 @@ package com.ry05k2ulv.myapplication.ui.generate.input
 
 import android.net.Uri
 import androidx.lifecycle.ViewModel
+import com.ry05k2ulv.myapplication.generator.GeneratorConfig
 import com.ry05k2ulv.myapplication.generator.MosaicArtGenerator
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -33,13 +34,13 @@ class InputViewModel @Inject constructor() : ViewModel() {
 
     fun updateGridSize(gridSize: Int) {
         _targetUiState.update {
-            it.copy(gridSize = gridSize)
+            it.copy(generatorConfig = it.generatorConfig.copy(gridSize = gridSize))
         }
     }
 
     fun updateOutputSize(outputSize: Int) {
         _targetUiState.update {
-            it.copy(outputSize = outputSize)
+            it.copy(generatorConfig = it.generatorConfig.copy(outputSize = outputSize))
         }
     }
 
@@ -69,15 +70,13 @@ class InputViewModel @Inject constructor() : ViewModel() {
 
 data class TargetUiState(
     val imageUri: Uri?,
-    val gridSize: Int,
-    val outputSize: Int
+    val generatorConfig: GeneratorConfig
 ) {
     companion object {
         val default
             get() = TargetUiState(
                 null,
-                MosaicArtGenerator.DEFAULT_GRID_SIZE,
-                MosaicArtGenerator.DEFAULT_OUTPUT_SIZE
+                GeneratorConfig()
             )
     }
 }

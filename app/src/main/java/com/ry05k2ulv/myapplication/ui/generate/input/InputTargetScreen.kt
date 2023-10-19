@@ -36,6 +36,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import coil.compose.rememberAsyncImagePainter
+import com.ry05k2ulv.myapplication.generator.GeneratorConfig
 import com.ry05k2ulv.myapplication.generator.MosaicArtGenerator
 import kotlin.math.roundToInt
 
@@ -54,8 +55,7 @@ internal fun InputTargetScreen(
     }
 
     val uri = uiState.imageUri
-    val gridSize = uiState.gridSize
-    val outputSize = uiState.outputSize
+    val generatorConfig = uiState.generatorConfig
 
     Column(modifier, horizontalAlignment = Alignment.CenterHorizontally) {
         Box(
@@ -80,8 +80,7 @@ internal fun InputTargetScreen(
                     .align(Alignment.BottomCenter)
                     .fillMaxWidth()
                     .padding(8.dp, 16.dp),
-                gridSize = gridSize,
-                outputSize = outputSize,
+                generatorConfig = generatorConfig,
                 onGridSizeChanged = onGridSizeChanged,
                 onOutputSizeChanged = onOutputSizeChanged
             )
@@ -123,11 +122,13 @@ private fun PictureButton(
 @Composable
 private fun AdvancedConfigurationCard(
     modifier: Modifier,
-    gridSize: Int,
-    outputSize: Int,
+    generatorConfig: GeneratorConfig,
     onGridSizeChanged: (Int) -> Unit,
     onOutputSizeChanged: (Int) -> Unit
 ) {
+    val gridSize = generatorConfig.gridSize
+    val outputSize = generatorConfig.outputSize
+
     var expanded by remember { mutableStateOf(false) }
 
     Card(modifier.animateContentSize()) {
@@ -152,16 +153,16 @@ private fun AdvancedConfigurationCard(
                 title = "Grid Size",
                 value = gridSize,
                 onValueChange = onGridSizeChanged,
-                valueRange = with(MosaicArtGenerator) { MIN_GRID_SIZE.toFloat()..MAX_GRID_SIZE.toFloat() },
-                steps = with(MosaicArtGenerator) { MAX_UNIT_PER_GRID - MIN_UNIT_PER_GRID - 1}
+                valueRange = with(GeneratorConfig) { MIN_GRID_SIZE.toFloat()..MAX_GRID_SIZE.toFloat() },
+                steps = with(GeneratorConfig) { MAX_UNIT_PER_GRID - MIN_UNIT_PER_GRID - 1}
             )
             SliderSection(
                 modifier = Modifier,
                 title = "Output Size",
                 value = outputSize,
                 onValueChange = onOutputSizeChanged,
-                valueRange = with(MosaicArtGenerator) { MIN_OUTPUT_SIZE.toFloat()..MAX_OUTPUT_SIZE.toFloat()},
-                steps = with(MosaicArtGenerator) { (MAX_OUTPUT_SIZE - MIN_OUTPUT_SIZE) / MIN_OUTPUT_SIZE - 1}
+                valueRange = with(GeneratorConfig) { MIN_OUTPUT_SIZE.toFloat()..MAX_OUTPUT_SIZE.toFloat()},
+                steps = with(GeneratorConfig) { (MAX_OUTPUT_SIZE - MIN_OUTPUT_SIZE) / MIN_OUTPUT_SIZE - 1}
             )
         }
     }
