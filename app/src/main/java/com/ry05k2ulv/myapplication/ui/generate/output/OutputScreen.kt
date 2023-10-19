@@ -44,7 +44,7 @@ import com.ry05k2ulv.myapplication.ui.theme.LocalCustomColorScheme
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun OutputScreen(
-    viewModel: ResultViewModel = hiltViewModel()
+    viewModel: OutputViewModel = hiltViewModel()
 ) {
     val scope = rememberCoroutineScope()
     val context = LocalContext.current

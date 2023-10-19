@@ -38,7 +38,7 @@ class OutputArgs(
 }
 
 @HiltViewModel
-class ResultViewModel @Inject constructor(
+class OutputViewModel @Inject constructor(
     private val magImageStore: MagImageStore,
     savedStateHandle: SavedStateHandle
 ) : ViewModel() {
