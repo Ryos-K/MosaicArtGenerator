@@ -46,7 +46,6 @@ import com.ry05k2ulv.myapplication.ui.theme.LocalCustomColorScheme
 fun OutputScreen(
     viewModel: OutputViewModel = hiltViewModel()
 ) {
-    val scope = rememberCoroutineScope()
     val context = LocalContext.current
 
     val uiState by viewModel.uiState.collectAsState()
@@ -165,9 +164,7 @@ private fun ProgressText(
 @Composable
 private fun GradientProgressBar(
     progress: Float,
-    modifier: Modifier = Modifier
-        .height(4.dp)
-        .fillMaxWidth(0.8f),
+    modifier: Modifier = Modifier,
     brush: Brush = Brush.horizontalGradient(
         listOf(
             Color.Yellow,

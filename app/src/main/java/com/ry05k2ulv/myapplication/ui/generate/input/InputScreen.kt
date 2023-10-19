@@ -106,7 +106,7 @@ fun InputScreen(
 
                             else -> {
                                 onFinish(
-                                    targetUiState.imageUri!!,
+                                    targetUiState.imageUri,
                                     materialUiState.imageUriSet,
                                     targetUiState.generatorConfig
                                 )
