@@ -39,14 +39,14 @@ import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.ry05k2ulv.myapplication.ui.components.ZoomableImage
 import com.ry05k2ulv.myapplication.ui.theme.LocalCustomColorScheme
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun OutputScreen(
-    viewModel: ResultViewModel = hiltViewModel()
+    viewModel: OutputViewModel = hiltViewModel()
 ) {
-    val scope = rememberCoroutineScope()
     val context = LocalContext.current
 
     val uiState by viewModel.uiState.collectAsState()
@@ -71,7 +71,7 @@ fun OutputScreen(
             .background(LocalCustomColorScheme.current.resultBackground)
     ) {
         if (result != null)
-            Image(
+            ZoomableImage(
                 bitmap = result.asImageBitmap(),
                 contentDescription = null,
                 modifier = Modifier.align(
@@ -165,9 +165,7 @@ private fun ProgressText(
 @Composable
 private fun GradientProgressBar(
     progress: Float,
-    modifier: Modifier = Modifier
-        .height(4.dp)
-        .fillMaxWidth(0.8f),
+    modifier: Modifier = Modifier,
     brush: Brush = Brush.horizontalGradient(
         listOf(
             Color.Yellow,

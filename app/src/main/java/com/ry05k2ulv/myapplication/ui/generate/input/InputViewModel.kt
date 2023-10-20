@@ -2,12 +2,15 @@ package com.ry05k2ulv.myapplication.ui.generate.input
 
 import android.net.Uri
 import androidx.lifecycle.ViewModel
-import com.ry05k2ulv.myapplication.generator.MosaicArtGenerator
+import com.ry05k2ulv.myapplication.generator.GeneratorConfig
+import com.ry05k2ulv.myapplication.generator.GeneratorPriority
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import javax.inject.Inject
+
+const val materialImageLimit = 256
 
 @HiltViewModel
 class InputViewModel @Inject constructor() : ViewModel() {
@@ -31,13 +34,19 @@ class InputViewModel @Inject constructor() : ViewModel() {
 
     fun updateGridSize(gridSize: Int) {
         _targetUiState.update {
-            it.copy(gridSize = gridSize)
+            it.copy(generatorConfig = it.generatorConfig.copy(gridSize = gridSize))
         }
     }
 
     fun updateOutputSize(outputSize: Int) {
         _targetUiState.update {
-            it.copy(outputSize = outputSize)
+            it.copy(generatorConfig = it.generatorConfig.copy(outputSize = outputSize))
+        }
+    }
+
+    fun updatePriority(priority: GeneratorPriority) {
+        _targetUiState.update {
+            it.copy(generatorConfig = it.generatorConfig.copy(priority = priority))
         }
     }
 
@@ -51,7 +60,7 @@ class InputViewModel @Inject constructor() : ViewModel() {
     fun addMaterials(uris: List<Uri>) {
         _materialUiState.update {
             it.copy(
-                imageUriSet = it.imageUriSet + uris
+                imageUriSet = it.imageUriSet + uris.take(materialImageLimit - it.imageUriSet.size)
             )
         }
     }
@@ -67,15 +76,13 @@ class InputViewModel @Inject constructor() : ViewModel() {
 
 data class TargetUiState(
     val imageUri: Uri?,
-    val gridSize: Int,
-    val outputSize: Int
+    val generatorConfig: GeneratorConfig
 ) {
     companion object {
         val default
             get() = TargetUiState(
                 null,
-                MosaicArtGenerator.DEFAULT_GRID_SIZE,
-                MosaicArtGenerator.DEFAULT_OUTPUT_SIZE
+                GeneratorConfig()
             )
     }
 }

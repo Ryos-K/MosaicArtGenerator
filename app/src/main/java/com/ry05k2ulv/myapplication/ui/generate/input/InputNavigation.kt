@@ -5,6 +5,7 @@ import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavOptions
 import androidx.navigation.compose.composable
+import com.ry05k2ulv.myapplication.generator.GeneratorConfig
 
 internal const val INPUT_NAVIGATION_ROUTE = "input"
 
@@ -13,7 +14,7 @@ fun NavController.navigateToInput(navOptions: NavOptions? = null) {
 }
 
 fun NavGraphBuilder.inputScreen(
-    onFinish: (Uri, Set<Uri>, Int, Int) -> Unit
+    onFinish: (Uri, Set<Uri>, GeneratorConfig) -> Unit
 ) {
     composable(
         route = INPUT_NAVIGATION_ROUTE,

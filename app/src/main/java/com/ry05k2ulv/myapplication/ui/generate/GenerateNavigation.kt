@@ -5,6 +5,7 @@ import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavOptions
 import androidx.navigation.navigation
+import com.ry05k2ulv.myapplication.generator.GeneratorConfig
 import com.ry05k2ulv.myapplication.ui.generate.output.navigateToOutput
 import com.ry05k2ulv.myapplication.ui.generate.output.outputScreen
 import com.ry05k2ulv.myapplication.ui.generate.input.INPUT_NAVIGATION_ROUTE
@@ -21,12 +22,11 @@ fun NavGraphBuilder.generateGraph(
         route = GENERATE_NAVIGATION_ROUTE
     ) {
         inputScreen(
-            onFinish = { targetImageUri: Uri, materialImageUriSet: Set<Uri>, gridSize: Int, outputSize: Int ->
+            onFinish = { targetImageUri: Uri, materialImageUriSet: Set<Uri>, generatorConfig: GeneratorConfig ->
                 navController.navigateToOutput(
                     targetImageUri,
                     materialImageUriSet,
-                    gridSize,
-                    outputSize,
+                    generatorConfig,
                     navOptions
                 )
             }

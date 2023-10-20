@@ -5,6 +5,7 @@ import android.net.Uri
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.ry05k2ulv.myapplication.generator.GeneratorConfig
 import com.ry05k2ulv.myapplication.generator.MosaicArtGenerator
 import com.ry05k2ulv.myapplication.imagestore.MagImageStore
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -20,46 +21,38 @@ import javax.inject.Inject
 
 const val targetImageUriArg = "targetImageUri"
 const val materialImageUrisArg = "materialImageUris"
-const val gridSizeArg = "gridSize"
-const val outputSizeArg = "outputSize"
+const val generatorConfigArg = "generatorConfig"
 
 class OutputArgs(
     val targetImageUri: Uri,
     val materialImageUris: List<Uri>,
-    val gridSize: Int,
-    val outputSize: Int,
+    val generatorConfig: GeneratorConfig
 ) {
     constructor(savedStateHandle: SavedStateHandle) :
             this(
                 Uri.parse(checkNotNull(savedStateHandle[targetImageUriArg])),
                 (checkNotNull(savedStateHandle[materialImageUrisArg]) as String).split(",")
                     .map { Uri.parse(it) },
-                checkNotNull(savedStateHandle[gridSizeArg]),
-                checkNotNull(savedStateHandle[outputSizeArg])
+                GeneratorConfigNavType.parseValue(checkNotNull(savedStateHandle[generatorConfigArg]))
             )
 }
 
 @HiltViewModel
-class ResultViewModel @Inject constructor(
+class OutputViewModel @Inject constructor(
     private val magImageStore: MagImageStore,
     savedStateHandle: SavedStateHandle
 ) : ViewModel() {
-
-
     private val targetImageUri: Uri
 
     private val materialImageUris: List<Uri>
 
-    private val gridSize: Int
-
-    private val outputSize: Int
+    private val generatorConfig: GeneratorConfig
 
     init {
         val args = OutputArgs(savedStateHandle)
         targetImageUri = args.targetImageUri
         materialImageUris = args.materialImageUris
-        gridSize = args.gridSize
-        outputSize = args.outputSize
+        generatorConfig = args.generatorConfig
     }
 
     private val _uiState = MutableStateFlow(OutputUiState.default)
@@ -92,8 +85,7 @@ class ResultViewModel @Inject constructor(
     private val generator = MosaicArtGenerator(
         targetImage = magImageStore.getBitmapOrNull(targetImageUri)
             ?: throw FileNotFoundException(),
-        gridSize = gridSize,
-        outputSize = outputSize
+        generatorConfig = generatorConfig
     )
 
     init {

@@ -7,13 +7,18 @@ import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.selection.selectable
+import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AddPhotoAlternate
 import androidx.compose.material.icons.filled.ArrowDropDown
@@ -23,6 +28,7 @@ import androidx.compose.material3.Divider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Slider
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -32,19 +38,21 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.unit.dp
 import coil.compose.rememberAsyncImagePainter
-import com.ry05k2ulv.myapplication.generator.MosaicArtGenerator
+import com.ry05k2ulv.myapplication.generator.GeneratorConfig
+import com.ry05k2ulv.myapplication.generator.GeneratorPriority
 import kotlin.math.roundToInt
 
 @Composable
 internal fun InputTargetScreen(
     modifier: Modifier,
     uiState: TargetUiState,
-    onGridSizeChanged: (Int) -> Unit,
-    onOutputSizeChanged: (Int) -> Unit,
+    onGridSizeChange: (Int) -> Unit,
+    onOutputSizeChange: (Int) -> Unit,
+    onPriorityChange: (GeneratorPriority) -> Unit,
     updateTargetImageUri: (Uri?) -> Unit
 ) {
     val targetImageLauncher = rememberLauncherForActivityResult(
@@ -54,8 +62,7 @@ internal fun InputTargetScreen(
     }
 
     val uri = uiState.imageUri
-    val gridSize = uiState.gridSize
-    val outputSize = uiState.outputSize
+    val generatorConfig = uiState.generatorConfig
 
     Column(modifier, horizontalAlignment = Alignment.CenterHorizontally) {
         Box(
@@ -80,10 +87,10 @@ internal fun InputTargetScreen(
                     .align(Alignment.BottomCenter)
                     .fillMaxWidth()
                     .padding(8.dp, 16.dp),
-                gridSize = gridSize,
-                outputSize = outputSize,
-                onGridSizeChanged = onGridSizeChanged,
-                onOutputSizeChanged = onOutputSizeChanged
+                generatorConfig = generatorConfig,
+                onGridSizeChange = onGridSizeChange,
+                onOutputSizeChange = onOutputSizeChange,
+                onPriorityChange = onPriorityChange
             )
         }
     }
@@ -123,11 +130,15 @@ private fun PictureButton(
 @Composable
 private fun AdvancedConfigurationCard(
     modifier: Modifier,
-    gridSize: Int,
-    outputSize: Int,
-    onGridSizeChanged: (Int) -> Unit,
-    onOutputSizeChanged: (Int) -> Unit
+    generatorConfig: GeneratorConfig,
+    onGridSizeChange: (Int) -> Unit,
+    onOutputSizeChange: (Int) -> Unit,
+    onPriorityChange: (GeneratorPriority) -> Unit
 ) {
+    val gridSize = generatorConfig.gridSize
+    val outputSize = generatorConfig.outputSize
+    val priority = generatorConfig.priority
+
     var expanded by remember { mutableStateOf(false) }
 
     Card(modifier.animateContentSize()) {
@@ -146,22 +157,32 @@ private fun AdvancedConfigurationCard(
             )
         }
         if (expanded) {
-            Divider(Modifier.padding(16.dp, 2.dp))
+            Divider(
+                Modifier.padding(16.dp, 2.dp),
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
             SliderSection(
                 modifier = Modifier,
                 title = "Grid Size",
                 value = gridSize,
-                onValueChange = onGridSizeChanged,
-                valueRange = with(MosaicArtGenerator) { MIN_GRID_SIZE.toFloat()..MAX_GRID_SIZE.toFloat() },
-                steps = with(MosaicArtGenerator) { MAX_UNIT_PER_GRID - MIN_UNIT_PER_GRID - 1}
+                onValueChange = onGridSizeChange,
+                valueRange = with(GeneratorConfig) { MIN_GRID_SIZE.toFloat()..MAX_GRID_SIZE.toFloat() },
+                steps = with(GeneratorConfig) { MAX_UNIT_PER_GRID - MIN_UNIT_PER_GRID - 1 }
             )
             SliderSection(
                 modifier = Modifier,
                 title = "Output Size",
                 value = outputSize,
-                onValueChange = onOutputSizeChanged,
-                valueRange = with(MosaicArtGenerator) { MIN_OUTPUT_SIZE.toFloat()..MAX_OUTPUT_SIZE.toFloat()},
-                steps = with(MosaicArtGenerator) { (MAX_OUTPUT_SIZE - MIN_OUTPUT_SIZE) / MIN_OUTPUT_SIZE - 1}
+                onValueChange = onOutputSizeChange,
+                valueRange = with(GeneratorConfig) { MIN_OUTPUT_SIZE.toFloat()..MAX_OUTPUT_SIZE.toFloat() },
+                steps = with(GeneratorConfig) { (MAX_OUTPUT_SIZE - MIN_OUTPUT_SIZE) / MIN_OUTPUT_SIZE - 1 }
+            )
+            ChooserSection(
+                modifier = Modifier,
+                title = "Priority",
+                textList = listOf("Quality", "Medium", "Speed"),
+                selectedIndex = priority.ordinal,
+                onChange = { index -> onPriorityChange(GeneratorPriority.values()[index]) }
             )
         }
     }
@@ -189,5 +210,58 @@ private fun SliderSection(
             valueRange = valueRange,
             steps = steps
         )
+    }
+}
+
+@Composable
+private fun ChooserSection(
+    modifier: Modifier,
+    title: String,
+    textList: List<String>,
+    selectedIndex: Int,
+    onChange: (index: Int) -> Unit
+) {
+    Column(modifier) {
+        Text(
+            text = title,
+            style = MaterialTheme.typography.titleSmall,
+            modifier = Modifier.padding(24.dp, 4.dp)
+        )
+        Row(
+            Modifier
+                .selectableGroup()
+                .padding(bottom = 4.dp),
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            textList.forEachIndexed { index, text ->
+                ChooserRow(
+                    text = text,
+                    selected = index == selectedIndex,
+                    onClick = { onChange(index) })
+            }
+        }
+    }
+}
+
+@Composable
+private fun ChooserRow(
+    text: String,
+    selected: Boolean,
+    onClick: () -> Unit = {}
+) {
+    Row(
+        modifier = Modifier
+            .selectable(
+                selected = selected,
+                role = Role.RadioButton,
+                onClick = onClick,
+            )
+//            .fillMaxWidth()
+            .padding(16.dp, 8.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        RadioButton(selected = selected, onClick = null)
+        Spacer(modifier = Modifier.width(8.dp))
+        Text(text = text, style = MaterialTheme.typography.bodyMedium)
     }
 }

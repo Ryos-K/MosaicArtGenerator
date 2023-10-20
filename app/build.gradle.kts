@@ -95,6 +95,9 @@ dependencies {
     implementation("androidx.datastore:datastore:1.0.0")
     implementation("com.google.protobuf:protobuf-javalite:3.19.1")
 
+    // Add Moshi to parse json
+    implementation("com.squareup.moshi:moshi-kotlin:1.14.0")
+
 //    // Add Splashscreen
 //    implementation("androidx.core:core-splashscreen:1.0.1")
 }
