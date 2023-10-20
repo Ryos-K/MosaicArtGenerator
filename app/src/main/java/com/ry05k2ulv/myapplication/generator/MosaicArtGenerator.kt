@@ -1,7 +1,7 @@
 package com.ry05k2ulv.myapplication.generator
 
 import android.graphics.Bitmap
-import com.ry05k2ulv.myapplication.generator.DissimilatiryCalculatorImpl.MediumCalculator
+import com.ry05k2ulv.myapplication.generator.dissimilarityCalculatorImpl.MediumCalculator
 import com.ry05k2ulv.myapplication.utils.square
 
 

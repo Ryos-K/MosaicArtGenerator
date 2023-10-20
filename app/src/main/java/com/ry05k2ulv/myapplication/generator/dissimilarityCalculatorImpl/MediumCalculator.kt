@@ -1,4 +1,4 @@
-package com.ry05k2ulv.myapplication.generator.DissimilatiryCalculatorImpl
+package com.ry05k2ulv.myapplication.generator.dissimilarityCalculatorImpl
 
 import android.graphics.Bitmap
 import androidx.core.graphics.blue
