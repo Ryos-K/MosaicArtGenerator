@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="input_title">入力</string>
+    <string name="input_next">次へ</string>
+    <string name="input_back">前へ</string>
+    <string name="input_finish">開始</string>
+    <string name="input_snackbar_target">目標画像が入力されていません</string>
+    <string name="input_snackbar_material">素材画像が入力されていません</string>
+    <string name="input_target_title">目標画像の入力</string>
+    <string name="input_target_advanced_configuration">生成設定</string>
+    <string name="input_target_grid_size">格子のサイズ</string>
+    <string name="input_target_output_size">出力画像のサイズ</string>
+    <string name="input_target_priority">優先度</string>
+    <string name="input_target_priority_quality">品質重視</string>
+    <string name="input_target_priority_medium">中間</string>
+    <string name="input_target_priority_speed">速度重視</string>
+    <string name="input_target_picture_icon_desctiption">画像を選択する</string>
+    <string name="input_material_title">素材画像の入力</string>
+    <string name="input_material_picture_icon_description">画像を選択する</string>
+    <string name="input_material_check_icon_description">選択を反転する</string>
+    <string name="input_material_delete_icon_description">選択画像を取り消す</string>
+    <string name="input_material_grid_icon_description">グリッド数を切り替える</string>
+</resources>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="output_title">出力</string>
+    <string name="output_progress">プログレス：</string>
+    <string name="output_share">共有</string>
+    <string name="output_save">保存</string>
+    <string name="output_saving">保存中</string>
+    <string name="output_saved">完了</string>
+</resources>

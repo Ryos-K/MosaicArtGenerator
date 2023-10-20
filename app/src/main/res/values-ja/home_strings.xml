@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="home_title">ホーム</string>
+    <string name="home_confirm_back_dialog_title">ホームに戻る</string>
+    <string name="home_confirm_back_dialog_message">入力及び出力内容は破棄されます</string>
+    <string name="home_confirm_back_dialog_yes">戻る</string>
+    <string name="home_confirm_back_dialog_no">取消</string>
+    <string name="home_confirm_delete_dialog_title">画像を削除する</string>
+    <string name="home_confirm_delete_dialog_message">削除された画像は復元されません</string>
+    <string name="home_confirm_delete_dialog_yes">削除</string>
+    <string name="home_confirm_delete_dialog_no">取消</string>
+</resources>

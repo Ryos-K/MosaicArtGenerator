@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="output_title">Output</string>
-    <string name="output_progress">Progress</string>
+    <string name="output_progress">Progress :</string>
     <string name="output_share">Share</string>
     <string name="output_save">Save</string>
     <string name="output_saving">Saving</string>
