@@ -2,6 +2,7 @@ package com.ry05k2ulv.myapplication.generator
 
 import android.graphics.Bitmap
 import com.ry05k2ulv.myapplication.generator.dissimilarityCalculatorImpl.MediumCalculator
+import com.ry05k2ulv.myapplication.generator.dissimilarityCalculatorImpl.SpeedCalculator
 import com.ry05k2ulv.myapplication.utils.square
 
 
@@ -46,7 +47,8 @@ class MosaicArtGenerator(
             GeneratorPriority.MEDIUM -> calculator =
                 MediumCalculator(target, gridSize, colCount, rowCount)
 
-            GeneratorPriority.SPEED -> TODO()
+            GeneratorPriority.SPEED -> calculator =
+                SpeedCalculator(target, gridSize, colCount, rowCount)
         }
     }
 
