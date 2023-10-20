@@ -237,6 +237,7 @@ private fun ChooserSection(
         Row(
             Modifier
                 .selectableGroup()
+                .fillMaxWidth()
                 .padding(bottom = 4.dp),
             horizontalArrangement = Arrangement.SpaceBetween
         ) {

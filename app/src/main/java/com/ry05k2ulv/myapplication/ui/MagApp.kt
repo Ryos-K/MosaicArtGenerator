@@ -24,9 +24,11 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.stringResource
 import androidx.navigation.NavOptions
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.ry05k2ulv.myapplication.R
 import com.ry05k2ulv.myapplication.navigation.MagNavHost
 import com.ry05k2ulv.myapplication.ui.home.ConfirmBackDialog
 import com.ry05k2ulv.myapplication.ui.home.HOME_NAVIGATION_ROUTE
@@ -74,7 +76,7 @@ fun MagApp() {
     Scaffold(
         topBar = {
             MagTopAppBar(
-                title = current.uppercase(),
+                title = stringResource(R.string.app_name),
                 navigationIcon = Icons.Default.Home,
                 navigationIconDescription = "Home",
                 onNavigationIconClick = {
