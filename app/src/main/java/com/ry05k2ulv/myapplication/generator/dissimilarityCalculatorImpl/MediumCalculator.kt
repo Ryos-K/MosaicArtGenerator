@@ -16,7 +16,7 @@ class MediumCalculator(
 ): DissimilarityCalculator {
 
     private val targetPixelsOfGrid = List(colCount) { col -> List(rowCount) { row ->
-        val pixels = IntArray(gridSize * gridSize)
+        val pixels = IntArray(gridSize.square())
         target.getPixels(pixels, 0, gridSize, col * gridSize, row * gridSize, gridSize, gridSize)
         pixels
     } }
@@ -25,13 +25,13 @@ class MediumCalculator(
         List(colCount) { MutableList(rowCount) { Float.POSITIVE_INFINITY } }
 
     override fun calc(material: Bitmap): List<Pair<Int, Int>> {
-        val pixels = IntArray(gridSize * gridSize)
+        val pixels = IntArray(gridSize.square())
         material.getPixels(pixels, 0, gridSize, 0, 0, gridSize, gridSize)
 
         val replaceList = mutableListOf<Pair<Int, Int>>()
         for (col in 0 until colCount) {
             for (row in 0 until rowCount) {
-                if (shouldReplaceWithUpdate(col, row, pixels)) {
+                if (shouldReplace(col, row, pixels)) {
                     replaceList.add(col to row)
                 }
             }
@@ -39,11 +39,11 @@ class MediumCalculator(
         return replaceList
     }
 
-    private fun shouldReplaceWithUpdate(col: Int, row: Int, pixels: IntArray): Boolean {
+    private fun shouldReplace(col: Int, row: Int, pixels: IntArray): Boolean {
         val targetPixels = targetPixelsOfGrid[col][row]
         val dissimilarity = minDissimilarityOfGrid[col][row]
         var sum = 0f
-        for (i in 0 until gridSize * gridSize) {
+        for (i in 0 until gridSize.square()) {
             sum += sqrt(
                 0f + (targetPixels[i].red - pixels[i].red).square() +
                         (targetPixels[i].green - pixels[i].green).square() +

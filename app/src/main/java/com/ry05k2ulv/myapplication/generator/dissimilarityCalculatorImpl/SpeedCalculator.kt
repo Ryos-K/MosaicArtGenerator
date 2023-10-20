@@ -2,7 +2,6 @@ package com.ry05k2ulv.myapplication.generator.dissimilarityCalculatorImpl
 
 import android.graphics.Bitmap
 import android.util.Log
-import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.core.graphics.blue
 import androidx.core.graphics.green
 import androidx.core.graphics.red
@@ -72,21 +71,18 @@ class SpeedCalculator(
         val replaceList = mutableListOf<Pair<Int, Int>>()
         for (col in 0 until colCount) {
             for (row in 0 until rowCount) {
-                if (shouldReplaceWithUpdate(col, row, featureVector))
+                if (shouldReplace(col, row, featureVector))
                     replaceList.add(col to row)
             }
         }
         return replaceList
     }
 
-    private fun shouldReplaceWithUpdate(col: Int, row: Int, featureVector: FeatureVector): Boolean {
+    private fun shouldReplace(col: Int, row: Int, featureVector: FeatureVector): Boolean {
         val targetFeatureVector = targetFeatureVectorOfGrid[col][row]
         val dissimilarity = targetFeatureVector.distance(featureVector)
         if (dissimilarity > minDissimilarityOfGrid[col][row])
             return false
-        if (col == 0 && row == 0) {
-            Log.d("", "$dissimilarity")
-        }
         minDissimilarityOfGrid[col][row] = dissimilarity
         return true
     }
