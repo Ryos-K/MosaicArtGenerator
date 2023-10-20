@@ -9,6 +9,9 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.res.stringResource
+import com.ry05k2ulv.myapplication.R
+import com.ry05k2ulv.myapplication.R.*
 
 
 @Composable
@@ -20,12 +23,12 @@ fun ConfirmDeleteDialog(
         onDismissRequest = onDismiss,
         confirmButton = {
             TextButton(onClick = onAccept) {
-                Text(text = "Yes", style = MaterialTheme.typography.bodyLarge)
+                Text(text = stringResource(string.home_confirm_delete_dialog_yes), style = MaterialTheme.typography.labelLarge)
             }
         },
         dismissButton = {
             TextButton(onClick = onDismiss) {
-                Text(text = "No")
+                Text(text = stringResource(string.home_confirm_delete_dialog_no), style = MaterialTheme.typography.labelLarge)
             }
         },
         icon = {
@@ -33,13 +36,13 @@ fun ConfirmDeleteDialog(
         },
         title = {
             Text(
-                text = "Delete Images",
+                text = stringResource(string.home_confirm_delete_dialog_title),
                 style = MaterialTheme.typography.titleLarge
             )
         },
         text = {
             Text(
-                text = "Do you want to delete images?",
+                text = stringResource(string.home_confirm_delete_dialog_message),
                 style = MaterialTheme.typography.bodyLarge
             )
         }

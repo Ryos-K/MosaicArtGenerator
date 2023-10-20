@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="input_title">Input</string>
+    <string name="input_next">Next</string>
+    <string name="input_back">Back</string>
+    <string name="input_finish">Finish</string>
+    <string name="input_snackbar_target">Target Image is Not Inputted</string>
+    <string name="input_snackbar_material">Material Images is Not Inputted</string>
+    <string name="input_target_title">Input Target Image</string>
+    <string name="input_target_advanced_configuration">Advanced Configuration</string>
+    <string name="input_target_grid_size">Grid Size</string>
+    <string name="input_target_output_size">Output Size</string>
+    <string name="input_target_priority">Priority</string>
+    <string name="input_target_priority_quality">Quality</string>
+    <string name="input_target_priority_medium">Medium</string>
+    <string name="input_target_priority_speed">Speed</string>
+    <string name="input_target_picture_icon_desctiption">Pick Target Image</string>
+    <string name="input_material_title">Input Material Images</string>
+    <string name="input_material_picture_icon_description">Pick Material Images</string>
+    <string name="input_material_check_icon_description">Toggle Selection</string>
+    <string name="input_material_delete_icon_description">Delete Images</string>
+    <string name="input_material_grid_icon_description">Switch the Number of Grid Columns</string>
+</resources>

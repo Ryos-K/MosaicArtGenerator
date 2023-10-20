@@ -49,8 +49,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
+import com.ry05k2ulv.myapplication.R
+import com.ry05k2ulv.myapplication.R.*
 
 const val INITIAL_GRID_COLUMNS = 3
 const val MIN_GRID_COLUMNS = 2
@@ -90,7 +93,7 @@ fun InputMaterialScreen(
 
                 }
             },
-            onImageLongClick = {selectedImageUris = selectedImageUris.toggle(it)}
+            onImageLongClick = { selectedImageUris = selectedImageUris.toggle(it) }
         )
 
         OperationBar(
@@ -124,17 +127,20 @@ fun ImageGrid(
     gridColumns: Int,
     onImageClick: (Uri) -> Unit,
     onImageLongClick: (Uri) -> Unit
-    ) {
+) {
     val lazyGridState = rememberLazyGridState()
     val showOperationBar by remember(lazyGridState) {
         derivedStateOf { lazyGridState.firstVisibleItemScrollOffset == 0 }
     }
-    val space by animateDpAsState(targetValue =  if (showOperationBar) 48.dp else 0.dp,  label = "space")
+    val space by animateDpAsState(
+        targetValue = if (showOperationBar) 48.dp else 0.dp,
+        label = "space"
+    )
     Column(
         Modifier.fillMaxSize(),
     ) {
 
-            Spacer(Modifier.height(space))
+        Spacer(Modifier.height(space))
 
         LazyVerticalGrid(
             columns = GridCells.Fixed(gridColumns),
@@ -145,8 +151,8 @@ fun ImageGrid(
                 ImageItem(
                     uri = uri,
                     selected = uri in selectedImageUris,
-                    onClick = {onImageClick(uri)},
-                    onLongClick = {onImageLongClick(uri)})
+                    onClick = { onImageClick(uri) },
+                    onLongClick = { onImageLongClick(uri) })
             }
         }
     }
@@ -184,7 +190,7 @@ private fun ImageItem(
         if (selected) {
             Icon(
                 imageVector = Icons.Default.CheckCircle,
-                contentDescription = "check",
+                contentDescription = stringResource(string.input_material_check_icon_description),
                 modifier = Modifier
                     .align(Alignment.TopEnd)
                     .padding(8.dp),
@@ -220,7 +226,7 @@ private fun OperationBar(
         Spacer(modifier = Modifier.weight(1f))
         Text(text = "$imageCount / $materialImageLimit")
         GridSwitchButton(onClick = onGridSwitch, itemModifier)
-        
+
     }
 }
 
@@ -232,7 +238,7 @@ private fun PictureButton(
     IconButton(onClick = onClick, modifier) {
         Icon(
             imageVector = Icons.Default.AddPhotoAlternate,
-            contentDescription = "Add photo"
+            contentDescription = stringResource(string.input_material_picture_icon_description)
         )
     }
 }
@@ -247,7 +253,7 @@ private fun SelectionToggleButton(
     IconButton(onClick = onClick, modifier) {
         Icon(
             imageVector = Icons.Default.CheckCircle,
-            contentDescription = "Toggle Select",
+            contentDescription = stringResource(string.input_material_check_icon_description),
             tint = color
         )
     }
@@ -269,7 +275,10 @@ private fun RemoveButton(
             modifier = modifier,
             enabled = selectMode
         ) {
-            Icon(imageVector = Icons.Default.DeleteOutline, contentDescription = "Remove Images")
+            Icon(
+                imageVector = Icons.Default.DeleteOutline,
+                contentDescription = stringResource(string.input_material_delete_icon_description)
+            )
         }
     }
 }
@@ -282,7 +291,7 @@ private fun GridSwitchButton(
     IconButton(onClick = onClick, modifier) {
         Icon(
             imageVector = Icons.Default.GridView,
-            contentDescription = "Switch the number of grid column"
+            contentDescription = stringResource(string.input_material_grid_icon_description)
         )
     }
 }

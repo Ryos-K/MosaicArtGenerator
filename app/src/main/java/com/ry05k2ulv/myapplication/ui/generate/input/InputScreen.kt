@@ -1,6 +1,7 @@
 package com.ry05k2ulv.myapplication.ui.generate.input
 
 import android.net.Uri
+import androidx.annotation.StringRes
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -26,8 +27,11 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.ry05k2ulv.myapplication.R
+import com.ry05k2ulv.myapplication.R.*
 import com.ry05k2ulv.myapplication.generator.GeneratorConfig
 import com.ry05k2ulv.myapplication.ui.LocalSnackbarHostState
 import kotlinx.coroutines.launch
@@ -68,11 +72,14 @@ fun InputScreen(
             )
         }
 
+        val targetNotFoundMessage = stringResource(string.input_snackbar_target)
+        val materialNotFoundMessage = stringResource(string.input_snackbar_material)
+
         BottomBar(
             modifier = Modifier
                 .height(56.dp)
                 .fillMaxWidth(),
-            title = current.title,
+            title = stringResource(current.title),
             showBackButton = current != InputRoute.InputTarget,
             onBack = {
                 when (current) {
@@ -88,7 +95,7 @@ fun InputScreen(
                             targetUiState.imageUri == null -> {
                                 scope.launch {
                                     snackbarHostState.showSnackbar(
-                                        "Target Image is not selected.",
+                                        targetNotFoundMessage,
                                         null,
                                         true
                                     )
@@ -98,7 +105,7 @@ fun InputScreen(
                             materialUiState.imageUriSet.isEmpty() -> {
                                 scope.launch {
                                     snackbarHostState.showSnackbar(
-                                        "Material Image is not selected.",
+                                        materialNotFoundMessage,
                                         null,
                                         true
                                     )
@@ -118,8 +125,8 @@ fun InputScreen(
                 }
             },
             nextButtonText = when (current) {
-                InputRoute.InputTarget -> "Next"
-                InputRoute.InputMaterial -> "Finish"
+                InputRoute.InputTarget -> stringResource(string.input_next)
+                InputRoute.InputMaterial -> stringResource(string.input_finish)
             }
         )
     }
@@ -132,8 +139,8 @@ private fun BottomBar(
     showBackButton: Boolean,
     onBack: () -> Unit,
     onNext: () -> Unit,
-    backButtonText: String = "Back",
-    nextButtonText: String = "Next"
+    backButtonText: String = stringResource(string.input_back),
+    nextButtonText: String = stringResource(string.input_next)
 ) {
     val background = MaterialTheme.colorScheme.secondaryContainer
     val textColor = MaterialTheme.colorScheme.onSecondaryContainer
@@ -174,7 +181,7 @@ private fun BackButton(
         onClick = onClick,
         modifier = modifier,
     ) {
-        Icon(imageVector = Icons.Default.NavigateBefore, contentDescription = "Back", tint = color)
+        Icon(imageVector = Icons.Default.NavigateBefore, contentDescription = stringResource(string.input_back), tint = color)
         Text(text = text, color = color)
     }
 }
@@ -191,11 +198,11 @@ private fun NextButton(
         modifier = modifier
     ) {
         Text(text = text, color = color)
-        Icon(imageVector = Icons.Default.NavigateNext, contentDescription = "Next", tint = color)
+        Icon(imageVector = Icons.Default.NavigateNext, contentDescription = stringResource(string.input_next), tint = color)
     }
 }
 
-enum class InputRoute(val title: String) {
-    InputTarget("Input Target Image"),
-    InputMaterial("Input Material Images"),
+enum class InputRoute(@StringRes val title: Int) {
+    InputTarget(string.input_target_title),
+    InputMaterial(string.input_material_title),
 }

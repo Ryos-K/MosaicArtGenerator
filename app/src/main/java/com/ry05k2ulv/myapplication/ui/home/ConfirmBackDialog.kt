@@ -11,7 +11,10 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.ry05k2ulv.myapplication.R
+import com.ry05k2ulv.myapplication.R.*
 
 @Composable
 fun ConfirmBackDialog(
@@ -22,12 +25,12 @@ fun ConfirmBackDialog(
         onDismissRequest = onDismiss,
         confirmButton = {
             TextButton(onClick = onAccept) {
-                Text(text = "Yes", style = MaterialTheme.typography.bodyLarge)
+                Text(text = stringResource(string.home_confirm_back_dialog_yes), style = MaterialTheme.typography.labelLarge)
             }
         },
         dismissButton = {
             TextButton(onClick = onDismiss) {
-                Text(text = "No")
+                Text(text = stringResource(string.home_confirm_back_dialog_no), style = MaterialTheme.typography.labelLarge)
             }
         },
         icon = {
@@ -35,13 +38,13 @@ fun ConfirmBackDialog(
         },
         title = {
             Text(
-                text = "Back to Home Screen",
+                text = stringResource(string.home_confirm_back_dialog_title),
                 style = MaterialTheme.typography.titleLarge
             )
         },
         text = {
             Text(
-                text = "Do you want to discard the inputs?",
+                text = stringResource(string.home_confirm_back_dialog_message),
                 style = MaterialTheme.typography.bodyLarge
             )
         }

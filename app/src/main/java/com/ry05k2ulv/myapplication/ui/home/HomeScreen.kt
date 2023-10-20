@@ -72,10 +72,7 @@ fun HomeScreen(
             gridColumns = 2,
             onImageClick = { if (selectMode) selectedImageUris = selectedImageUris.toggle(it) },
             onImageLongClick = {
-                selectedImageUris = selectedImageUris.toggle(it); Log.d(
-                "toggled",
-                "$selectedImageUris"
-            )
+                selectedImageUris = selectedImageUris.toggle(it)
             }
         )
 

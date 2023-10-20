@@ -37,8 +37,11 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.ry05k2ulv.myapplication.R
+import com.ry05k2ulv.myapplication.R.*
 import com.ry05k2ulv.myapplication.ui.components.ZoomableImage
 import com.ry05k2ulv.myapplication.ui.theme.LocalCustomColorScheme
 
@@ -148,13 +151,13 @@ private fun ProgressText(
 ) {
     Row(modifier, horizontalArrangement = Arrangement.SpaceEvenly) {
         Text(
-            "Progress :",
+            text = stringResource(string.output_progress),
             Modifier.padding(4.dp),
             color = LocalCustomColorScheme.current.resultContent,
             style = MaterialTheme.typography.titleMedium
         )
         Text(
-            "${(progress * 100).toInt()} (%)",
+            text = "${(progress * 100).toInt()} (%)",
             Modifier.padding(4.dp),
             color = LocalCustomColorScheme.current.resultContent,
             style = MaterialTheme.typography.titleMedium
@@ -221,9 +224,9 @@ private fun ShareButton(
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
             Icon(
                 imageVector = Icons.Default.Share,
-                contentDescription = "Share Image",
+                contentDescription = stringResource(string.output_share),
             )
-            Text("Share")
+            Text(stringResource(string.output_share))
         }
     }
 }
@@ -248,25 +251,25 @@ private fun SaveButton(
                 SaveState.YET -> {
                     Icon(
                         imageVector = Icons.Default.Save,
-                        contentDescription = "Save Image"
+                        contentDescription = stringResource(string.output_save)
                     )
-                    Text(text = "Save")
+                    Text(text = stringResource(string.output_save))
                 }
 
                 SaveState.SAVING -> {
                     Icon(
                         imageVector = Icons.Default.IncompleteCircle,
-                        contentDescription = "Save Image"
+                        contentDescription = stringResource(string.output_saving)
                     )
-                    Text(text = "Saving")
+                    Text(text = stringResource(string.output_saving))
                 }
 
                 SaveState.SAVED -> {
                     Icon(
                         imageVector = Icons.Default.Check,
-                        contentDescription = "Saved"
+                        contentDescription = stringResource(string.output_saved)
                     )
-                    Text(text = "Saved")
+                    Text(text = stringResource(string.output_saved))
                 }
             }
         }

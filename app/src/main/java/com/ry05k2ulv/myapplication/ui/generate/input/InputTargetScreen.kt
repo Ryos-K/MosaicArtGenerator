@@ -39,9 +39,12 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.unit.dp
 import coil.compose.rememberAsyncImagePainter
+import com.ry05k2ulv.myapplication.R
+import com.ry05k2ulv.myapplication.R.*
 import com.ry05k2ulv.myapplication.generator.GeneratorConfig
 import com.ry05k2ulv.myapplication.generator.GeneratorPriority
 import kotlin.math.roundToInt
@@ -122,7 +125,7 @@ private fun PictureButton(
     IconButton(onClick = onClick, modifier) {
         Icon(
             imageVector = Icons.Default.AddPhotoAlternate,
-            contentDescription = "Add photo"
+            contentDescription = stringResource(string.input_target_picture_icon_desctiption)
         )
     }
 }
@@ -151,7 +154,7 @@ private fun AdvancedConfigurationCard(
             if (expanded) Icon(imageVector = Icons.Default.ArrowDropDown, contentDescription = null)
             else Icon(imageVector = Icons.Default.ArrowRight, contentDescription = null)
             Text(
-                text = "Advanced Configuration",
+                text = stringResource(string.input_target_advanced_configuration),
                 modifier = Modifier.padding(4.dp, 0.dp),
                 style = MaterialTheme.typography.titleMedium
             )
@@ -163,7 +166,7 @@ private fun AdvancedConfigurationCard(
             )
             SliderSection(
                 modifier = Modifier,
-                title = "Grid Size",
+                title = stringResource(string.input_target_grid_size),
                 value = gridSize,
                 onValueChange = onGridSizeChange,
                 valueRange = with(GeneratorConfig) { MIN_GRID_SIZE.toFloat()..MAX_GRID_SIZE.toFloat() },
@@ -171,7 +174,7 @@ private fun AdvancedConfigurationCard(
             )
             SliderSection(
                 modifier = Modifier,
-                title = "Output Size",
+                title = stringResource(string.input_target_output_size),
                 value = outputSize,
                 onValueChange = onOutputSizeChange,
                 valueRange = with(GeneratorConfig) { MIN_OUTPUT_SIZE.toFloat()..MAX_OUTPUT_SIZE.toFloat() },
@@ -179,8 +182,12 @@ private fun AdvancedConfigurationCard(
             )
             ChooserSection(
                 modifier = Modifier,
-                title = "Priority",
-                textList = listOf("Quality", "Medium", "Speed"),
+                title = stringResource(string.input_target_priority),
+                textList = listOf(
+                    stringResource(string.input_target_priority_quality),
+                    stringResource(string.input_target_priority_medium),
+                    stringResource(string.input_target_priority_speed)
+                ),
                 selectedIndex = priority.ordinal,
                 onChange = { index -> onPriorityChange(GeneratorPriority.values()[index]) }
             )
