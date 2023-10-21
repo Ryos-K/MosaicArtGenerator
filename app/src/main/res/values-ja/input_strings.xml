@@ -9,12 +9,13 @@
     <string name="input_target_title">目標画像の入力</string>
     <string name="input_target_advanced_configuration">生成設定</string>
     <string name="input_target_grid_size">格子のサイズ</string>
+    <string name="input_target_output_extension">拡張子</string>
     <string name="input_target_output_size">出力画像のサイズ</string>
     <string name="input_target_priority">優先度</string>
     <string name="input_target_priority_quality">品質重視</string>
     <string name="input_target_priority_medium">中間</string>
     <string name="input_target_priority_speed">速度重視</string>
-    <string name="input_target_picture_icon_desctiption">画像を選択する</string>
+    <string name="input_target_picture_icon_description">画像を選択する</string>
     <string name="input_material_title">素材画像の入力</string>
     <string name="input_material_picture_icon_description">画像を選択する</string>
     <string name="input_material_check_icon_description">選択を反転する</string>

@@ -9,12 +9,13 @@
     <string name="input_target_title">Input Target Image</string>
     <string name="input_target_advanced_configuration">Advanced Configuration</string>
     <string name="input_target_grid_size">Grid Size</string>
+    <string name="input_target_output_extension">Extension</string>
     <string name="input_target_output_size">Output Size</string>
     <string name="input_target_priority">Priority</string>
     <string name="input_target_priority_quality">Quality</string>
     <string name="input_target_priority_medium">Medium</string>
     <string name="input_target_priority_speed">Speed</string>
-    <string name="input_target_picture_icon_desctiption">Pick Target Image</string>
+    <string name="input_target_picture_icon_description">Pick Target Image</string>
     <string name="input_material_title">Input Material Images</string>
     <string name="input_material_picture_icon_description">Pick Material Images</string>
     <string name="input_material_check_icon_description">Toggle Selection</string>

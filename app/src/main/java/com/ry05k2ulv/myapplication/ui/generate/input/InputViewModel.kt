@@ -4,6 +4,8 @@ import android.net.Uri
 import androidx.lifecycle.ViewModel
 import com.ry05k2ulv.myapplication.generator.GeneratorConfig
 import com.ry05k2ulv.myapplication.generator.GeneratorPriority
+import com.ry05k2ulv.myapplication.generator.MosaicArtGenerator
+import com.ry05k2ulv.myapplication.generator.OutputExtension
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -35,6 +37,12 @@ class InputViewModel @Inject constructor() : ViewModel() {
     fun updateGridSize(gridSize: Int) {
         _targetUiState.update {
             it.copy(generatorConfig = it.generatorConfig.copy(gridSize = gridSize))
+        }
+    }
+
+    fun updateOutputExtension(outputExtension: OutputExtension) {
+        _targetUiState.update {
+            it.copy(generatorConfig = it.generatorConfig.copy(outputExtension = outputExtension, outputSize = GeneratorConfig.DEFAULT_OUTPUT_SIZE))
         }
     }
 

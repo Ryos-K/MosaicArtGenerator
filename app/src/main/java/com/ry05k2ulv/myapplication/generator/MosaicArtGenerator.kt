@@ -32,11 +32,13 @@ class MosaicArtGenerator(
 
     private val target: Bitmap
 
+    private val width = colCount * gridSize
+
+    private val height = rowCount * gridSize
+
     init {
-        val dstWidth = colCount * gridSize
-        val dstHeight = rowCount * gridSize
-        result = Bitmap.createBitmap(dstWidth, dstHeight, Bitmap.Config.ARGB_8888)
-        target = Bitmap.createScaledBitmap(targetImage, dstWidth, dstHeight, false)
+        result = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
+        target = Bitmap.createScaledBitmap(targetImage, width, height, false)
     }
 
     private val calculator: DissimilarityCalculator
@@ -53,6 +55,8 @@ class MosaicArtGenerator(
     }
 
     fun getResultCopy(): Bitmap = result.copy(Bitmap.Config.ARGB_8888, false)
+
+    fun getResultCopyScaledHalf(): Bitmap = Bitmap.createScaledBitmap(result, width / 2, height / 2, false)
 
     fun applyMaterialImage(bitmap: Bitmap) {
         val cropped = bitmap.cropSquare()

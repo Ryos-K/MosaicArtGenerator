@@ -4,6 +4,7 @@ import android.content.ContentUris
 import android.content.ContentValues
 import android.content.Context
 import android.graphics.Bitmap
+import android.graphics.Bitmap.CompressFormat
 import android.graphics.ImageDecoder
 import android.net.Uri
 import android.os.Build
@@ -11,6 +12,7 @@ import android.os.Environment
 import android.provider.MediaStore
 import android.util.Log
 import androidx.core.content.FileProvider
+import com.ry05k2ulv.myapplication.generator.OutputExtension
 import dagger.hilt.android.qualifiers.ApplicationContext
 import java.io.File
 import java.io.IOException
@@ -88,13 +90,37 @@ class MagImageStore @Inject constructor(
     fun saveBitmapAsPng(
         bitmap: Bitmap,
         filename: String,
+    ): Uri =
+        saveBitmap(
+            bitmap = bitmap,
+            filename = filename.suffixPng(),
+            mimeType = "image/png",
+            compressFormat = CompressFormat.PNG
+        )
+
+    fun saveBitmapAsJpg(
+        bitmap: Bitmap,
+        filename: String
+    ): Uri =
+        saveBitmap(
+            bitmap = bitmap,
+            filename = filename.suffixJpg(),
+            mimeType = "image/jpg",
+            compressFormat = CompressFormat.JPEG
+        )
+
+    private fun saveBitmap(
+        bitmap: Bitmap,
+        filename: String,
+        mimeType: String,
+        compressFormat: CompressFormat
     ): Uri {
         val uri: Uri
         val outputStream: OutputStream =
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
                 val contentValues = ContentValues().apply {
-                    put(MediaStore.MediaColumns.DISPLAY_NAME, filename.suffixPng())
-                    put(MediaStore.MediaColumns.MIME_TYPE, "image/png")
+                    put(MediaStore.MediaColumns.DISPLAY_NAME, filename)
+                    put(MediaStore.MediaColumns.MIME_TYPE, mimeType)
                     put(
                         MediaStore.MediaColumns.RELATIVE_PATH,
                         "${Environment.DIRECTORY_PICTURES}/$MAG_DIRECTORY"
@@ -110,11 +136,11 @@ class MagImageStore @Inject constructor(
             } else {
                 val imageDir =
                     Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES)
-                val file = File("$imageDir/$MAG_DIRECTORY", filename.suffixPng())
+                val file = File("$imageDir/$MAG_DIRECTORY", filename)
                 uri = Uri.fromFile(file)
                 file.outputStream()
             }
-        bitmap.compress(Bitmap.CompressFormat.PNG, 100, outputStream)
+        bitmap.compress(compressFormat, 100, outputStream)
         outputStream.close()
         Log.d(null, uri.toString())
         return uri
@@ -144,5 +170,8 @@ class MagImageStore @Inject constructor(
 
     private fun String.suffixPng(): String =
         if (endsWith(".png", true)) this else "$this.png"
+
+    private fun String.suffixJpg(): String =
+        if (endsWith(".jpg", true)) this else "$this.jpg"
 
 }

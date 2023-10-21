@@ -43,10 +43,10 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.unit.dp
 import coil.compose.rememberAsyncImagePainter
-import com.ry05k2ulv.myapplication.R
 import com.ry05k2ulv.myapplication.R.*
 import com.ry05k2ulv.myapplication.generator.GeneratorConfig
 import com.ry05k2ulv.myapplication.generator.GeneratorPriority
+import com.ry05k2ulv.myapplication.generator.OutputExtension
 import kotlin.math.roundToInt
 
 @Composable
@@ -54,6 +54,7 @@ internal fun InputTargetScreen(
     modifier: Modifier,
     uiState: TargetUiState,
     onGridSizeChange: (Int) -> Unit,
+    onOutputExtensionChange: (OutputExtension) -> Unit,
     onOutputSizeChange: (Int) -> Unit,
     onPriorityChange: (GeneratorPriority) -> Unit,
     updateTargetImageUri: (Uri?) -> Unit
@@ -92,6 +93,7 @@ internal fun InputTargetScreen(
                     .padding(8.dp, 16.dp),
                 generatorConfig = generatorConfig,
                 onGridSizeChange = onGridSizeChange,
+                onOutputExtensionChange = onOutputExtensionChange,
                 onOutputSizeChange = onOutputSizeChange,
                 onPriorityChange = onPriorityChange
             )
@@ -125,7 +127,7 @@ private fun PictureButton(
     IconButton(onClick = onClick, modifier) {
         Icon(
             imageVector = Icons.Default.AddPhotoAlternate,
-            contentDescription = stringResource(string.input_target_picture_icon_desctiption)
+            contentDescription = stringResource(string.input_target_picture_icon_description)
         )
     }
 }
@@ -135,10 +137,12 @@ private fun AdvancedConfigurationCard(
     modifier: Modifier,
     generatorConfig: GeneratorConfig,
     onGridSizeChange: (Int) -> Unit,
+    onOutputExtensionChange: (OutputExtension) -> Unit,
     onOutputSizeChange: (Int) -> Unit,
     onPriorityChange: (GeneratorPriority) -> Unit
 ) {
     val gridSize = generatorConfig.gridSize
+    val outputExtension = generatorConfig.outputExtension
     val outputSize = generatorConfig.outputSize
     val priority = generatorConfig.priority
 
@@ -172,13 +176,20 @@ private fun AdvancedConfigurationCard(
                 valueRange = with(GeneratorConfig) { MIN_GRID_SIZE.toFloat()..MAX_GRID_SIZE.toFloat() },
                 steps = with(GeneratorConfig) { MAX_UNIT_PER_GRID - MIN_UNIT_PER_GRID - 1 }
             )
+            ChooserSection(
+                modifier = Modifier,
+                title = stringResource(string.input_target_output_extension),
+                textList = OutputExtension.values().map { it.toString() },
+                selectedIndex = outputExtension.ordinal,
+                onChange = { index -> onOutputExtensionChange(OutputExtension.values()[index])}
+            )
             SliderSection(
                 modifier = Modifier,
                 title = stringResource(string.input_target_output_size),
                 value = outputSize,
                 onValueChange = onOutputSizeChange,
-                valueRange = with(GeneratorConfig) { MIN_OUTPUT_SIZE.toFloat()..MAX_OUTPUT_SIZE.toFloat() },
-                steps = with(GeneratorConfig) { (MAX_OUTPUT_SIZE - MIN_OUTPUT_SIZE) / MIN_OUTPUT_SIZE - 1 }
+                valueRange = with(GeneratorConfig) { MIN_OUTPUT_SIZE.toFloat()..outputExtension.maxSize.toFloat() },
+                steps = with(GeneratorConfig) { (outputExtension.maxSize - MIN_OUTPUT_SIZE) / MIN_OUTPUT_SIZE - 1 }
             )
             ChooserSection(
                 modifier = Modifier,
@@ -239,7 +250,7 @@ private fun ChooserSection(
                 .selectableGroup()
                 .fillMaxWidth()
                 .padding(bottom = 4.dp),
-            horizontalArrangement = Arrangement.SpaceBetween
+            horizontalArrangement = Arrangement.SpaceEvenly
         ) {
             textList.forEachIndexed { index, text ->
                 ChooserRow(

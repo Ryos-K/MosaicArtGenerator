@@ -7,6 +7,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ry05k2ulv.myapplication.generator.GeneratorConfig
 import com.ry05k2ulv.myapplication.generator.MosaicArtGenerator
+import com.ry05k2ulv.myapplication.generator.OutputExtension
 import com.ry05k2ulv.myapplication.imagestore.MagImageStore
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -98,7 +99,7 @@ class OutputViewModel @Inject constructor(
                 generator.applyMaterialImage(
                     magImageStore.getBitmapOrNull(it) ?: return@forEachIndexed
                 )
-                updateResult(generator.getResultCopy())
+                updateResult(generator.getResultCopyScaledHalf())
                 delay(20)
                 updateProgress(index)
             }
@@ -110,15 +111,23 @@ class OutputViewModel @Inject constructor(
     fun saveResult(filename: String) {
         if (_uiState.value.uriSaved != SaveState.YET) return
         viewModelScope.launch(Dispatchers.IO) {
-            val bitmap = _uiState.value.result
-            if (bitmap != null) {
-                updateUriSaved(SaveState.SAVING)
-                magImageStore.saveBitmapAsPng(
-                    bitmap = bitmap,
-                    filename = filename
-                )
-                updateUriSaved(SaveState.SAVED)
+            val bitmap = generator.getResultCopy()
+            updateUriSaved(SaveState.SAVING)
+            when (generatorConfig.outputExtension) {
+                OutputExtension.PNG ->
+                    magImageStore.saveBitmapAsPng(
+                        bitmap = bitmap,
+                        filename = filename
+                    )
+
+                OutputExtension.JPG ->
+                    magImageStore.saveBitmapAsJpg(
+                        bitmap = bitmap,
+                        filename = filename
+                    )
             }
+
+            updateUriSaved(SaveState.SAVED)
         }
     }
 

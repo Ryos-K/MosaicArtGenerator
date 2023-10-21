@@ -59,6 +59,7 @@ fun InputScreen(
                 modifier = Modifier.weight(1f),
                 uiState = targetUiState,
                 onGridSizeChange = viewModel::updateGridSize,
+                onOutputExtensionChange = viewModel::updateOutputExtension,
                 onOutputSizeChange = viewModel::updateOutputSize,
                 onPriorityChange = viewModel::updatePriority,
                 updateTargetImageUri = viewModel::updateTargetImageUri,
